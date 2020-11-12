@@ -15,11 +15,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Maven
+    - name: Setup Maven authorization
       run: |
         printf "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
         printf "${{ secrets.SETTINGS_XML }}" > ~/.m2/settings.xml
-        mvn package
+    - name: Build with Maven
+      run: mvn package
     - uses: actions/upload-artifact@v1
       with:
        name: BortexelBot
