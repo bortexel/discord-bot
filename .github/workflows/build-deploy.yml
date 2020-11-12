@@ -21,21 +21,7 @@ jobs:
         printf "${{ secrets.SETTINGS_XML }}" > ~/.m2/settings.xml
     - name: Build with Maven
       run: mvn package
-    - uses: actions/upload-artifact@v1
-      with:
-       name: BortexelBot
-       path: target/
-  deploy:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/download-artifact@v1
-      with:
-          name: BortexelBot
-          path: target/
     - name: Build, tag, and push Docker image to registry
-      id: build-image
       run: |
         docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PASSWORD }} registry.ruscalworld.ru
         docker build -t registry.ruscalworld.ru/ruscalworld/bortexelbot .
