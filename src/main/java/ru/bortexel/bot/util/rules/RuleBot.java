@@ -1,4 +1,4 @@
-package ru.bortexel.bot.rules;
+package ru.bortexel.bot.util.rules;
 
 import java.awt.*;
 

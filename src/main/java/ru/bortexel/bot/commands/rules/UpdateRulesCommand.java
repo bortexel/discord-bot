@@ -6,8 +6,8 @@ import org.apache.commons.io.FileUtils;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.rules.RuleBot;
-import ru.bortexel.bot.rules.RuleParser;
+import ru.bortexel.bot.util.rules.RuleBot;
+import ru.bortexel.bot.util.rules.RuleParser;
 import ru.bortexel.bot.util.HttpRequest;
 
 import java.io.File;

@@ -1,14 +1,10 @@
-package ru.bortexel.bot.rules;
+package ru.bortexel.bot.util.rules;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.io.FileUtils;
 import ru.bortexel.bot.BortexelBot;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
