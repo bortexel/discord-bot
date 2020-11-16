@@ -36,6 +36,7 @@ public class Poll {
         for (MessageReaction reaction : reactions) {
             if (reaction.getReactionEmote().isEmote()) continue;
             String emoji = reaction.getReactionEmote().getEmoji();
+            if (reactions.indexOf(reaction) >= embed.getFields().size()) continue;
             MessageEmbed.Field field = embed.getFields().get(reactions.indexOf(reaction));
             int votes = reaction.getCount() - 1;
             String name = field.getName() == null ? "" : field.getName().split(" • ")[1];
