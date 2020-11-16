@@ -24,6 +24,7 @@ public class MainCommandProvider implements CommandProvider {
         return new ArrayList<Command>() {{
             add(new HelpCommand(bot));
             add(new PhotoCommand());
+            add(new PollCommand(bot));
         }};
     }
 }

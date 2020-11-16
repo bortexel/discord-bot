@@ -13,6 +13,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.util.AccessLevels;
+import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 
 import javax.security.auth.login.LoginException;
@@ -47,6 +48,7 @@ public class BortexelBot {
 
         JDABuilder builder = JDABuilder.createDefault(token);
         builder.setStatus(OnlineStatus.IDLE);
+        builder.addEventListeners(new PollReactionListener());
 
         try {
             JDA jda = builder.build();
