@@ -10,4 +10,5 @@ public class Roles {
     public static final String BUILDER_ROLE = "685422421439807509";
 
     public static final String SPONSOR_ROLE = "651398861868367902";
+    public static final String SERVER_BOOSTER_ROLE = "645498320285990923";
 }

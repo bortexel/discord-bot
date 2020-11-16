@@ -38,6 +38,7 @@ public class AccessLevels {
     public AccessLevel getSponsorAccessLevel() {
         return new AccessLevel(new ArrayList<Role>() {{
             add(jda.getRoleById(Roles.SPONSOR_ROLE));
+            add(jda.getRoleById(Roles.SERVER_BOOSTER_ROLE));
         }});
     }
 
