@@ -45,7 +45,7 @@ public class PollCommand implements Command {
             }
 
             varEmojis.add(emoji);
-            variants.add(new PollVariant(EmojiParser.removeAllEmojis(line), emoji));
+            variants.add(new PollVariant(TextUtil.removeSpacesInStart(EmojiParser.removeAllEmojis(line)), emoji));
         }
 
         if (variants.size() < 2) {

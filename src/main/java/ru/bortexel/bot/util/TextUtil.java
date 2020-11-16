@@ -84,4 +84,9 @@ public class TextUtil {
         }
         return progress.toString();
     }
+
+    public static String removeSpacesInStart(String string) {
+        while (string.startsWith(" ")) string = string.substring(1);
+        return string;
+    }
 }
