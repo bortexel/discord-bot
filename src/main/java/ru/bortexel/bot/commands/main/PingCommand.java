@@ -6,6 +6,9 @@ import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.EmbedUtil;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class PingCommand implements Command {
     @Override
     public void onCommand(Message message) {
@@ -16,6 +19,10 @@ public class PingCommand implements Command {
         builder.setTitle("Пинг до Discord");
         builder.addField("Gateway", "" + gatewayPing + " ms", true);
         builder.addField("REST API", "" + restPing + " ms", true);
+        try {
+            InetAddress host = InetAddress.getLocalHost();
+            builder.setFooter("Host: " + host.getHostName() + " (" + host.getHostAddress() + ")");
+        } catch (UnknownHostException ignored) { }
         message.getChannel().sendMessage(builder.build()).queue();
     }
 
