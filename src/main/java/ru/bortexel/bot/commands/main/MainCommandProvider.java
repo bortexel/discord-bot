@@ -25,6 +25,7 @@ public class MainCommandProvider implements CommandProvider {
             add(new HelpCommand(bot));
             add(new PhotoCommand());
             add(new PollCommand(bot));
+            add(new PingCommand());
         }};
     }
 }
