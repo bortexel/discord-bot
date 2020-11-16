@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.bortexel.bot.util.poll.Poll;
@@ -57,7 +58,7 @@ public class PollCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "<args>";
+        return "<вопрос>\n<эмодзи> <название варианта>\n<эмодзи> <название варианта>\n...";
     }
 
     @Override
@@ -77,7 +78,8 @@ public class PollCommand implements Command {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return bot.getAccessLevels().getAdministratorAccessLevel();
+        AccessLevels levels = bot.getAccessLevels();
+        return AccessLevel.make(levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
     }
 
     @Override

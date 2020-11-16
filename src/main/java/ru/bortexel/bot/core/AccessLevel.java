@@ -3,6 +3,7 @@ package ru.bortexel.bot.core;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccessLevel {
@@ -21,5 +22,11 @@ public class AccessLevel {
         if (member.isOwner()) return true;
         for (Role role : this.roles) if (member.getRoles().contains(role)) return true;
         return false;
+    }
+
+    public static AccessLevel make(AccessLevel... levels) {
+        List<Role> roles = new ArrayList<>();
+        for (AccessLevel level : levels) roles.addAll(level.roles);
+        return new AccessLevel(roles);
     }
 }
