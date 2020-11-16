@@ -48,6 +48,12 @@ public class PollCommand implements Command {
             variants.add(new PollVariant(EmojiParser.removeAllEmojis(line), emoji));
         }
 
+        if (variants.size() < 2) {
+            EmbedBuilder builder = EmbedUtil.makeError("Ошибка", "Вы должны задать как минимум два варианта.");
+            message.getChannel().sendMessage(builder.build()).queue();
+            return;
+        }
+
         Poll.create(message.getTextChannel(), title, variants);
     }
 
