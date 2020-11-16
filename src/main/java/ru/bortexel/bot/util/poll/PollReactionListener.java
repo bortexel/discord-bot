@@ -11,28 +11,37 @@ import ru.bortexel.bot.BortexelBot;
 public class PollReactionListener extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        if (event.getReaction().getReactionEmote().isEmote()) return;
-        Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
-        if (message == null) return;
-        Poll poll = Poll.getFromMessage(message);
-        if (poll != null) poll.rerender(message);
+        try {
+            if (event.getReaction().getReactionEmote().isEmote()) return;
+            Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
+            if (message == null) return;
+            Poll poll = Poll.getFromMessage(message);
+            if (poll != null) poll.rerender(message);
 
-        for (MessageReaction reaction : message.getReactions()) {
-            if (!reaction.getReactionEmote().isEmoji()) continue;
-            if (event.getJDA().getSelfUser().getId().equals(event.getUserId())) continue;
-            if (event.getReaction().getReactionEmote().getEmoji().equals(reaction.getReactionEmote().getEmoji())) continue;
-            reaction.retrieveUsers().forEach(user -> {
-                if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
-            });
+            for (MessageReaction reaction : message.getReactions()) {
+                if (!reaction.getReactionEmote().isEmoji()) continue;
+                if (event.getJDA().getSelfUser().getId().equals(event.getUserId())) continue;
+                if (event.getReaction().getReactionEmote().getEmoji().equals(reaction.getReactionEmote().getEmoji()))
+                    continue;
+                reaction.retrieveUsers().forEach(user -> {
+                    if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
+                });
+            }
+        } catch (Exception e) {
+            BortexelBot.handleException(e);
         }
     }
 
     @Override
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
-        if (event.getReaction().getReactionEmote().isEmote()) return;
-        Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-        if (message == null) return;
-        Poll poll = Poll.getFromMessage(message);
-        if (poll != null) poll.rerender(message);
+        try {
+            if (event.getReaction().getReactionEmote().isEmote()) return;
+            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+            if (message == null) return;
+            Poll poll = Poll.getFromMessage(message);
+            if (poll != null) poll.rerender(message);
+        } catch (Exception e) {
+            BortexelBot.handleException(e);
+        }
     }
 }
