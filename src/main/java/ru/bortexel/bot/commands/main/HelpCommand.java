@@ -73,7 +73,9 @@ public class HelpCommand implements Command {
                         access.insert(0, role.getAsMention() + " ");
                     }
                 }
-                builder.addField("Доступ", access.toString(), true);
+                builder.addField("Доступ", access.toString(), false);
+                if (command.getAllowedChannelIds().length > 0)
+                    builder.addField("Разрешённые каналы", "<#" + String.join(">, <#", command.getAllowedChannelIds()) + ">", false);
                 channel.sendMessage(builder.build()).queue();
             }
         } catch (Exception e) {

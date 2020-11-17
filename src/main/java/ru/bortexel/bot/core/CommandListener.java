@@ -33,7 +33,8 @@ public class CommandListener extends ListenerAdapter {
             AccessLevel accessLevel = command.getAccessLevel();
             if (accessLevel != null && !accessLevel.hasAccess(event.getMember())) return;
 
-            if (!Arrays.asList(command.getAllowedChannelIds()).contains(event.getChannel().getId()) && !event.getMember().isOwner()) {
+            if (!event.getMember().isOwner() && command.getAllowedChannelIds().length > 0 &&
+                    !Arrays.asList(command.getAllowedChannelIds()).contains(event.getChannel().getId())) {
                 EmbedBuilder builder = EmbedUtil.makeError("Недопустимый канал", "Данная команда не может быть выполнена здесь. " +
                         "Допустимые каналы: <#" + String.join(">, <#", command.getAllowedChannelIds()) + ">");
                 event.getChannel().sendMessage(builder.build()).queue();
