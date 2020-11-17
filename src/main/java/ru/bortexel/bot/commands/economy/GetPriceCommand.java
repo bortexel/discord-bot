@@ -96,6 +96,11 @@ public class GetPriceCommand implements Command {
     }
 
     @Override
+    public String[] getAllowedChannelIds() {
+        return new String[] { Channels.BOTS_CHANNEL };
+    }
+
+    @Override
     public AccessLevel getAccessLevel() {
         return null;
     }

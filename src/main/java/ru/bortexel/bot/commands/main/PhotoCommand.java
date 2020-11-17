@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.photos.Photo;
@@ -79,6 +80,11 @@ public class PhotoCommand implements Command {
     @Override
     public String[] getAliases() {
         return new String[] { "screenshot", "фото", "скриншот", "скрин" };
+    }
+
+    @Override
+    public String[] getAllowedChannelIds() {
+        return new String[] { Channels.BOTS_CHANNEL };
     }
 
     @Override

@@ -8,6 +8,8 @@ import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 
+import java.util.Arrays;
+
 public class CommandListener extends ListenerAdapter {
     private final BortexelBot bot;
 
@@ -30,6 +32,13 @@ public class CommandListener extends ListenerAdapter {
             assert event.getMember() != null;
             AccessLevel accessLevel = command.getAccessLevel();
             if (accessLevel != null && !accessLevel.hasAccess(event.getMember())) return;
+
+            if (!Arrays.asList(command.getAllowedChannelIds()).contains(event.getChannel().getId()) && !event.getMember().isOwner()) {
+                EmbedBuilder builder = EmbedUtil.makeError("Недопустимый канал", "Данная команда не может быть выполнена здесь. " +
+                        "Допустимые каналы: <#" + String.join(">, <#", command.getAllowedChannelIds()) + ">");
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
 
             if (args.length - 1 < command.getMinArgumentCount()) {
                 EmbedBuilder builder = EmbedUtil.makeCommandUsage(command);

@@ -7,6 +7,7 @@ import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.AccessLevels;
+import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.bortexel.bot.util.poll.Poll;
@@ -80,6 +81,11 @@ public class PollCommand implements Command {
     @Override
     public String[] getAliases() {
         return new String[0];
+    }
+
+    @Override
+    public String[] getAllowedChannelIds() {
+        return new String[] { Channels.BOTS_CHANNEL, Channels.PARLIAMENT_CHAT, Channels.ADMIN_CHAT };
     }
 
     @Override

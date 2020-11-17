@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 
 import java.net.InetAddress;
@@ -49,6 +50,11 @@ public class PingCommand implements Command {
     @Override
     public String[] getAliases() {
         return new String[0];
+    }
+
+    @Override
+    public String[] getAllowedChannelIds() {
+        return new String[] { Channels.BOTS_CHANNEL };
     }
 
     @Override
