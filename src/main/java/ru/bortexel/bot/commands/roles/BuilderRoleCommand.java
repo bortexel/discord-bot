@@ -21,7 +21,7 @@ public class BuilderRoleCommand extends RoleCommand {
 
     @Override
     public String[] getAllowedChannelIds() {
-        return new String[] { Channels.BUILDERS_CHAT };
+        return new String[] { Channels.BUILDERS_CHAT, Channels.BOTS_CHANNEL };
     }
 
     @Override
