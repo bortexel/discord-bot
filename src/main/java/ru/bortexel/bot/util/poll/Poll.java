@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Poll {
+    protected static final String MULTIPLE_CHOICE_ALLOWED_STRING = "Множественный выбор разрешён";
+
     private final String title;
     private final List<PollVariant> variants;
+    private boolean multipleChoice;
 
     public Poll(String title, List<PollVariant> variants) {
         this.title = title;
@@ -48,19 +51,31 @@ public class Poll {
         }
 
         String title = embed.getTitle();
-        return new Poll(title, variants);
-    }
-
-    public static Poll create(TextChannel channel, String title, List<PollVariant> variants) {
         Poll poll = new Poll(title, variants);
-        EmbedBuilder builder = poll.makePollEmbed();
-        Message message = channel.sendMessage(builder.build()).complete();
-        for (PollVariant variant : variants) message.addReaction(variant.getEmoji()).complete();
+
+        MessageEmbed.Footer footer = embed.getFooter();
+        if (footer != null && footer.getText() != null && footer.getText().contains(MULTIPLE_CHOICE_ALLOWED_STRING))
+            poll.setMultipleChoiceAllowed(true);
+
         return poll;
     }
 
+    public static Poll create(String title, List<PollVariant> variants) {
+        return new Poll(title, variants);
+    }
+
+    public void send(TextChannel channel) {
+        EmbedBuilder builder = this.makePollEmbed();
+        Message message = channel.sendMessage(builder.build()).complete();
+        for (PollVariant variant : variants) message.addReaction(variant.getEmoji()).complete();
+    }
+
     public void rerender(Message message) {
-        message.editMessage(this.makePollEmbed().build()).queue();
+        EmbedBuilder builder = this.makePollEmbed();
+        int memberCount = this.getMemberCount(message);
+        String plural = TextUtil.getPlural(memberCount, " человек принял ", " человека приняли ", " человек приняли ");
+        builder.setFooter(memberCount + plural + "участие" + (this.isMultipleChoiceAllowed() ? " • " + MULTIPLE_CHOICE_ALLOWED_STRING : ""));
+        message.editMessage(builder.build()).queue();
     }
 
     private EmbedBuilder makePollEmbed() {
@@ -74,6 +89,7 @@ public class Poll {
             String value = TextUtil.makeDefaultProgressBar(Math.round(percentage), 15) + " • " +
                     variant.getVotes() + " (" + percentage + "%)";
             builder.addField(name, value, false);
+            builder.setFooter(this.isMultipleChoiceAllowed() ? MULTIPLE_CHOICE_ALLOWED_STRING : "");
         }
 
         return builder;
@@ -83,5 +99,30 @@ public class Poll {
         int total = 0;
         for (PollVariant variant : this.variants) total += variant.getVotes();
         return total;
+    }
+
+    public int getMemberCount(Message message) {
+        List<String> members = new ArrayList<>();
+        int total = 0;
+
+        for (PollVariant variant : this.variants) {
+            List<User> currentMembers = variant.getReaction(message).retrieveUsers().complete();
+            for (User currentMember : currentMembers) {
+                if (members.contains(currentMember.getId())) continue;
+                if (currentMember.isBot()) continue;
+                members.add(currentMember.getId());
+                total++;
+            }
+        }
+
+        return total;
+    }
+
+    public boolean isMultipleChoiceAllowed() {
+        return this.multipleChoice;
+    }
+
+    public void setMultipleChoiceAllowed(boolean multipleChoice) {
+        this.multipleChoice = multipleChoice;
     }
 }

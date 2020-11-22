@@ -29,11 +29,20 @@ public class PollCommand implements Command {
         String[] lines = message.getContentRaw().split("\n");
         String[] args = TextUtil.getCommandArgs(lines[0]);
         String title = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
         List<PollVariant> variants = new ArrayList<>();
         List<String> varEmojis = new ArrayList<>();
+        boolean multipleChoice = false;
 
         for (int i = 1; i < lines.length; i++) {
-            String line = lines[i];
+            String line = TextUtil.removeDoubleSpaces(lines[i]);
+            line = TextUtil.removeSpacesInStart(line);
+
+            if (line.startsWith("%")) {
+                if (line.substring(1).equalsIgnoreCase("multiple")) multipleChoice = true;
+                continue;
+            }
+
             List<String> emojis = EmojiParser.extractEmojis(line);
             String emoji = TextUtil.getNumberEmoji(i);
             if (emojis.size() > 0) emoji = emojis.get(0);
@@ -55,7 +64,9 @@ public class PollCommand implements Command {
             return;
         }
 
-        Poll.create(message.getTextChannel(), title, variants);
+        Poll poll = Poll.create(title, variants);
+        poll.setMultipleChoiceAllowed(multipleChoice);
+        poll.send(message.getTextChannel());
     }
 
     @Override

@@ -32,10 +32,10 @@ public class PollVariant {
         return votes;
     }
 
-    public int getActualVotes(Message message) {
-        if (!Poll.isPoll(message)) return 0;
+    public MessageReaction getReaction(Message message) {
+        if (!Poll.isPoll(message)) return null;
         for (MessageReaction reaction : message.getReactions())
-            if (reaction.getReactionEmote().getEmoji().equals(this.emoji)) return reaction.getCount();
-        return 0;
+            if (reaction.getReactionEmote().getEmoji().equals(this.emoji)) return reaction;
+        return null;
     }
 }

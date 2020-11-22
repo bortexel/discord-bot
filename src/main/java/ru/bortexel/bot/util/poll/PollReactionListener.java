@@ -28,19 +28,21 @@ public class PollReactionListener extends ListenerAdapter {
             Poll poll = Poll.getFromMessage(message);
             if (poll == null) return;
 
-            // Check if member reacted twice
-            for (MessageReaction reaction : message.getReactions()) {
-                MessageReaction.ReactionEmote currentReactionEmote = reaction.getReactionEmote();
-                // Custom emojis aren't supported
-                if (currentReactionEmote.isEmote()) continue;
-                // Check if this reaction was added by user, not by current bot
-                if (selfUser.getId().equals(event.getUserId())) continue;
-                // Don't delete current reaction
-                if (reactionEmote.getEmoji().equals(currentReactionEmote.getEmoji())) continue;
-                // Remove reaction that was set by user
-                reaction.retrieveUsers().forEach(user -> {
-                    if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
-                });
+            if (!poll.isMultipleChoiceAllowed()) {
+                // Check if member reacted twice
+                for (MessageReaction reaction : message.getReactions()) {
+                    MessageReaction.ReactionEmote currentReactionEmote = reaction.getReactionEmote();
+                    // Custom emojis aren't supported
+                    if (currentReactionEmote.isEmote()) continue;
+                    // Check if this reaction was added by user, not by current bot
+                    if (selfUser.getId().equals(event.getUserId())) continue;
+                    // Don't delete current reaction
+                    if (reactionEmote.getEmoji().equals(currentReactionEmote.getEmoji())) continue;
+                    // Remove reaction that was set by user
+                    reaction.retrieveUsers().forEach(user -> {
+                        if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
+                    });
+                }
             }
 
             // Finally, update embed with poll
