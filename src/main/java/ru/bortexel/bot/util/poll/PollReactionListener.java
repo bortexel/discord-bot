@@ -16,7 +16,7 @@ public class PollReactionListener extends ListenerAdapter {
             Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
             if (message == null) return;
             Poll poll = Poll.getFromMessage(message);
-            if (poll != null) poll.rerender(message);
+            if (poll == null) return;
 
             for (MessageReaction reaction : message.getReactions()) {
                 if (!reaction.getReactionEmote().isEmoji()) continue;
@@ -27,6 +27,8 @@ public class PollReactionListener extends ListenerAdapter {
                     if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
                 });
             }
+
+            poll.rerender(message);
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }
