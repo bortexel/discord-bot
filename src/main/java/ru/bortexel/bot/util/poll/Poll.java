@@ -39,7 +39,7 @@ public class Poll {
             if (reactions.indexOf(reaction) >= embed.getFields().size()) continue;
             MessageEmbed.Field field = embed.getFields().get(reactions.indexOf(reaction));
             int votes = reaction.getCount() - 1;
-            String name = field.getName() != null && field.getName().split(" • ").length < 2 ? field.getName().split(" • ")[1] : "";
+            String name = field.getName() != null && field.getName().split(" • ").length >= 2 ? field.getName().split(" • ")[1] : "";
             variants.add(new PollVariant(name, emoji, votes));
         }
 
