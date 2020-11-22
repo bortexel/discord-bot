@@ -3,6 +3,7 @@ package ru.bortexel.bot.util.poll;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 
@@ -23,6 +24,8 @@ public class Poll {
         if (message.getEmbeds().size() != 1) return false;
         MessageEmbed embed = message.getEmbeds().get(0);
         if (embed.getTitle() == null) return false;
+        if (embed.getColor() == null) return false;
+        if (!embed.getColor().equals(BortexelBot.EMBED_COLOR)) return false;
         return embed.getFields().size() != 0;
     }
 
@@ -39,7 +42,8 @@ public class Poll {
             if (reactions.indexOf(reaction) >= embed.getFields().size()) continue;
             MessageEmbed.Field field = embed.getFields().get(reactions.indexOf(reaction));
             int votes = reaction.getCount() - 1;
-            String name = field.getName() != null && field.getName().split(" • ").length >= 2 ? field.getName().split(" • ")[1] : "";
+            if (field.getName() == null || !field.getName().contains(" • ")) return null;
+            String name = field.getName().split(" • ")[1];
             variants.add(new PollVariant(name, emoji, votes));
         }
 
