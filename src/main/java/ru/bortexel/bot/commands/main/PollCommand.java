@@ -76,7 +76,7 @@ public class PollCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "<вопрос>\n[эмодзи] <название варианта>\n[эмодзи] <название варианта>\n...";
+        return "<вопрос>\n[эмодзи] <название варианта>\n[эмодзи] <название варианта>\n...\n[%multiple]";
     }
 
     @Override
