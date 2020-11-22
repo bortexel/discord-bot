@@ -15,37 +15,36 @@ public class PollReactionListener extends ListenerAdapter {
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         try {
             MessageReaction.ReactionEmote reactionEmote = event.getReaction().getReactionEmote();
-            // Custom emojis aren't supported
+            // Кастомные эмодзи не поддерживаются
             if (reactionEmote.isEmote()) return;
 
             Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
             SelfUser selfUser = event.getJDA().getSelfUser();
             if (message == null) return;
-            // Check if message was sent by current (!) bot
+            // Проверяем, что сообщение было отправлено текущим пользователем
             if (!message.getAuthor().getId().equals(selfUser.getId())) return;
 
-            // Attempt to get poll for message
+            // Пробуем получить голосование из сообщения
             Poll poll = Poll.getFromMessage(message);
             if (poll == null) return;
 
             if (!poll.isMultipleChoiceAllowed()) {
-                // Check if member reacted twice
+                // Проверяем, что участник не проголосовал дважды, если это запрещено
                 for (MessageReaction reaction : message.getReactions()) {
                     MessageReaction.ReactionEmote currentReactionEmote = reaction.getReactionEmote();
-                    // Custom emojis aren't supported
                     if (currentReactionEmote.isEmote()) continue;
-                    // Check if this reaction was added by user, not by current bot
+                    // Реакцию, добавленную нашим ботом удалять не следует
                     if (selfUser.getId().equals(event.getUserId())) continue;
-                    // Don't delete current reaction
+                    // Мы удалим все остальные реакции этого пользователя, а эту оставим
                     if (reactionEmote.getEmoji().equals(currentReactionEmote.getEmoji())) continue;
-                    // Remove reaction that was set by user
+                    // Удаляем эту реакцию
                     reaction.retrieveUsers().forEach(user -> {
                         if (user.getId().equals(event.getUserId())) reaction.removeReaction(user).queue();
                     });
                 }
             }
 
-            // Finally, update embed with poll
+            // Наконец отрисовываем эмбед с голосованием заново
             poll.rerender(message);
         } catch (Exception e) {
             handleException(e);
