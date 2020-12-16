@@ -106,7 +106,7 @@ public class PollCommand implements Command {
 
     @Override
     public String[] getAllowedChannelIds() {
-        return new String[] { Channels.BOTS_CHANNEL, Channels.PARLIAMENT_CHAT, Channels.ADMIN_CHAT };
+        return new String[] { Channels.BOTS_CHANNEL, Channels.PARLIAMENT_CHAT, Channels.ADMIN_CHAT, Channels.POLL_CHAT };
     }
 
     @Override

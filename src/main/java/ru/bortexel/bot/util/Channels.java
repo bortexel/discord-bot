@@ -6,4 +6,5 @@ public class Channels {
     public static final String PARLIAMENT_CHAT = "674169493915828234";
     public static final String ADMIN_CHAT = "536126710702145547";
     public static final String BUILDERS_CHAT = "685422588901720102";
+    public static final String POLL_CHAT = "788851870663180298";
 }
