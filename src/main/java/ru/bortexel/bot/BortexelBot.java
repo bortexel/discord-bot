@@ -41,6 +41,7 @@ public class BortexelBot {
         String token = System.getenv("BOT_TOKEN");
         //String apiToken = System.getenv("API_TOKEN");
         String sentryDsn = System.getenv("SENTRY_DSN");
+        String apiUrl = System.getenv("API_URL");
 
         if (sentryDsn != null) {
             Sentry.init(sentryOptions -> sentryOptions.setDsn(sentryDsn));
@@ -52,9 +53,11 @@ public class BortexelBot {
 
         try {
             JDA jda = builder.build();
-            //Bortexel4J client = Bortexel4J.login(apiToken);
 
-            new BortexelBot(jda, null).run();
+            Bortexel4J client = Bortexel4J.anonymous();
+            if (apiUrl != null) client.setApiUrl(apiUrl);
+
+            new BortexelBot(jda, client).run();
         } catch (Exception e) {
             Sentry.captureException(e);
         }

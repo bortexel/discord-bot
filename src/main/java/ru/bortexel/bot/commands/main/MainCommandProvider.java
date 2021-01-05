@@ -23,7 +23,7 @@ public class MainCommandProvider implements CommandProvider {
     public List<Command> getCommands() {
         return new ArrayList<Command>() {{
             add(new HelpCommand(bot));
-            add(new PhotoCommand());
+            add(new PhotoCommand(bot));
             add(new PollCommand(bot));
             add(new PingCommand());
         }};

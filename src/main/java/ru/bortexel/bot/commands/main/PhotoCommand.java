@@ -8,16 +8,21 @@ import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
-import ru.bortexel.bot.util.TextUtil;
+import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.models.photo.Photo;
 
-import java.util.List;
 import java.util.Random;
 
 public class PhotoCommand implements Command {
+    private final BortexelBot bot;
+
+    public PhotoCommand(BortexelBot bot) {
+        this.bot = bot;
+    }
+
     @Override
     public void onCommand(Message message) {
-        Photo.getAll().executeAsync(photos -> {
+        Photo.getAll(bot.getApiClient()).executeAsync(photos -> {
             try {
                 MessageChannel channel = message.getChannel();
                 if (photos == null || photos.size() == 0) {

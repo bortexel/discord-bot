@@ -30,7 +30,7 @@ public class GetPriceCommand implements Command {
             Item item;
 
             try {
-                item = Item.getByID(id).execute();
+                item = Item.getByID(id, bot.getApiClient()).execute();
             } catch (NotFoundException e) {
                 MessageEmbed messageEmbed = EmbedUtil.makeError("Предмет не найден", "Указанный предмет не найден в базе данных. " +
                         "Проверьте правильность написания названия и повторите попытку.").build();
@@ -38,7 +38,7 @@ public class GetPriceCommand implements Command {
                 return;
             }
 
-            item.getPrices().executeAsync(prices -> {
+            item.getPrices(bot.getApiClient()).executeAsync(prices -> {
                 if (prices.getPrices() == null) {
                     MessageEmbed messageEmbed = EmbedUtil.makeError("Стоимость не установлена", "Указанный предмет есть в нашей базе данных, " +
                             "однако стоимость на него не была установлена.").build();
