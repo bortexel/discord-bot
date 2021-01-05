@@ -2,6 +2,7 @@ package ru.bortexel.bot.util;
 
 public class PriceUtil {
     public static String formatPrice(double price) {
+        price = (double) Math.round(price * 100) / 100;
         if (price > 10) price = Math.round(price);
 
         if (price > 64) {

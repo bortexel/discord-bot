@@ -9,7 +9,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-import ru.ruscalworld.bortexel4j.photos.Photo;
+import ru.ruscalworld.bortexel4j.models.photo.Photo;
 
 import java.util.List;
 import java.util.Random;
@@ -17,43 +17,30 @@ import java.util.Random;
 public class PhotoCommand implements Command {
     @Override
     public void onCommand(Message message) {
-        try {
-            String[] args = TextUtil.getCommandArgs(message);
-            List<Photo> photos = null;
-
-            if (args.length == 1) {
-                photos = Photo.getAll();
-            } else if (args.length > 1) {
-                int season = 0;
-                try {
-                    season = Integer.parseInt(args[1]);
-                } catch (Exception ignored) {
+        Photo.getAll().executeAsync(photos -> {
+            try {
+                MessageChannel channel = message.getChannel();
+                if (photos == null || photos.size() == 0) {
+                    EmbedBuilder builder = EmbedUtil.makeError("Неизвестная ошибка", "Не удалось получить скриншоты с сайта");
+                    channel.sendMessage(builder.build()).queue();
+                    return;
                 }
 
-                photos = Photo.getAll(season);
-            }
+                Random random = new Random();
+                int index = random.nextInt(photos.size());
+                Photo photo = photos.get(index);
 
-            MessageChannel channel = message.getChannel();
-            if (photos == null || photos.size() == 0) {
-                EmbedBuilder builder = EmbedUtil.makeError("Неизвестная ошибка", "Не удалось получить скриншоты с сайта");
+                EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
+                builder.setImage(photo.getUrl());
+                builder.addField("Сезон", "" + photo.getSeason(), true);
+                if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
+                if (photo.getAuthor() != null) builder.addField("Автор", photo.getAuthor(), true);
+
                 channel.sendMessage(builder.build()).queue();
-                return;
+            } catch (Exception e) {
+                BortexelBot.handleException(e);
             }
-
-            Random random = new Random();
-            int index = random.nextInt(photos.size());
-            Photo photo = photos.get(index);
-
-            EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
-            builder.setImage(photo.getUrl());
-            builder.addField("Сезон", "" + photo.getSeason(), true);
-            if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
-            if (photo.getAuthor() != null) builder.addField("Автор", photo.getAuthor(), true);
-
-            channel.sendMessage(builder.build()).queue();
-        } catch (Exception e) {
-            BortexelBot.handleException(e);
-        }
+        });
     }
 
     @Override
@@ -63,13 +50,13 @@ public class PhotoCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "[сезон]";
+        return null;
     }
 
     @Override
     public String getUsageExample() {
-        return "`$photo` покажет случайный скриншот с сайта\n" +
-                "`$photo 4` покажет случайный скриншот с четвёртого сезона";
+        return "`$photo` покажет случайный скриншот с сайта\n";
+                //"`$photo 4` покажет случайный скриншот с четвёртого сезона";
     }
 
     @Override
