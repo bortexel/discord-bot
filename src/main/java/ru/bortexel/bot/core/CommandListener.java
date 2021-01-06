@@ -41,6 +41,12 @@ public class CommandListener extends ListenerAdapter {
                 return;
             }
 
+            if (args.length >= 2 && args[1].equalsIgnoreCase("help")) {
+                EmbedBuilder builder = EmbedUtil.makeCommandInfo(command);
+                event.getChannel().sendMessage(builder.build()).queue();
+                return;
+            }
+
             if (args.length - 1 < command.getMinArgumentCount()) {
                 EmbedBuilder builder = EmbedUtil.makeCommandUsage(command);
                 event.getChannel().sendMessage(builder.build()).queue();

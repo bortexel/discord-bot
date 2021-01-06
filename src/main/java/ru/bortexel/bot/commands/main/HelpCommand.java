@@ -57,25 +57,7 @@ public class HelpCommand implements Command {
                     return;
                 }
 
-                builder.setTitle("Команда **`" + BortexelBot.COMMAND_PREFIX + command.getName() + "`**");
-                if (command.getDescription() != null) builder.setDescription(command.getDescription());
-                if (command.getUsage() != null)
-                    builder.addField("Использование", "`" + TextUtil.getFullCommandUsage(command) + "`", false);
-                if (command.getUsageExample() != null)
-                    builder.addField("Пример использования", command.getUsageExample(), false);
-                if (command.getAliases().length > 0) builder.addField("Сокращения", "`" + BortexelBot.COMMAND_PREFIX +
-                        String.join("`, `" + BortexelBot.COMMAND_PREFIX, command.getAliases()) + "`", false);
-
-                StringBuilder access = new StringBuilder("Общедоступна");
-                if (command.getAccessLevel() != null) {
-                    access = new StringBuilder();
-                    for (Role role : command.getAccessLevel().getRoles()) {
-                        access.insert(0, role.getAsMention() + " ");
-                    }
-                }
-                builder.addField("Доступ", access.toString(), false);
-                if (command.getAllowedChannelIds().length > 0)
-                    builder.addField("Разрешённые каналы", "<#" + String.join(">, <#", command.getAllowedChannelIds()) + ">", false);
+                builder = EmbedUtil.makeCommandInfo(command);
                 channel.sendMessage(builder.build()).queue();
             }
         } catch (Exception e) {

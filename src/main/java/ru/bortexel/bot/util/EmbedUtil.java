@@ -2,6 +2,7 @@ package ru.bortexel.bot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
@@ -40,6 +41,31 @@ public class EmbedUtil {
         builder.addField("За 64", PriceUtil.formatPrice(fPrice * 64) + " " + Emojis.GOLD_ORE, true);
         builder.setTimestamp(price.getTime().toLocalDateTime());
         builder.setFooter("Последнее обновление");
+
+        return builder;
+    }
+
+    public static EmbedBuilder makeCommandInfo(Command command) {
+        EmbedBuilder builder = makeDefaultEmbed();
+        builder.setTitle("Команда **`" + BortexelBot.COMMAND_PREFIX + command.getName() + "`**");
+        if (command.getDescription() != null) builder.setDescription(command.getDescription());
+        if (command.getUsage() != null)
+            builder.addField("Использование", "`" + TextUtil.getFullCommandUsage(command) + "`", false);
+        if (command.getUsageExample() != null)
+            builder.addField("Пример использования", command.getUsageExample(), false);
+        if (command.getAliases().length > 0) builder.addField("Сокращения", "`" + BortexelBot.COMMAND_PREFIX +
+                String.join("`, `" + BortexelBot.COMMAND_PREFIX, command.getAliases()) + "`", false);
+
+        StringBuilder access = new StringBuilder("Общедоступна");
+        if (command.getAccessLevel() != null) {
+            access = new StringBuilder();
+            for (Role role : command.getAccessLevel().getRoles()) {
+                access.insert(0, role.getAsMention() + " ");
+            }
+        }
+        builder.addField("Доступ", access.toString(), false);
+        if (command.getAllowedChannelIds().length > 0)
+            builder.addField("Разрешённые каналы", "<#" + String.join(">, <#", command.getAllowedChannelIds()) + ">", false);
 
         return builder;
     }
