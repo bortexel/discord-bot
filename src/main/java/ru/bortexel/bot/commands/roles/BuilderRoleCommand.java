@@ -16,7 +16,7 @@ public class BuilderRoleCommand extends RoleCommand {
 
     @Override
     protected Role getRole() {
-        return this.bot.getJda().getRoleById(Roles.BUILDER_ROLE);
+        return this.bot.getJDA().getRoleById(Roles.BUILDER_ROLE);
     }
 
     @Override

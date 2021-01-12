@@ -111,7 +111,7 @@ public class BortexelBot {
         return this.commandProviders;
     }
 
-    public JDA getJda() {
+    public JDA getJDA() {
         return jda;
     }
 

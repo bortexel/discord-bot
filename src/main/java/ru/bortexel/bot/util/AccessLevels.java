@@ -11,7 +11,7 @@ public class AccessLevels {
     private final JDA jda;
 
     public AccessLevels(BortexelBot bot) {
-        this.jda = bot.getJda();
+        this.jda = bot.getJDA();
     }
 
     public AccessLevel getAdministratorAccessLevel() {
