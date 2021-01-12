@@ -1,4 +1,4 @@
-package ru.bortexel.bot.commands.rules;
+package ru.bortexel.bot.commands.info;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.ChannelUtil;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.rules.RuleBot;
 import ru.bortexel.bot.util.rules.RuleParser;
@@ -25,11 +26,8 @@ public class UpdateRulesCommand implements Command {
     @Override
     public void onCommand(Message message) {
         try {
-            if (!message.getChannel().getName().equals("правила")) return;
-
             TextChannel channel = message.getTextChannel();
-            channel.getHistory().retrievePast(100)
-                    .queue(messages -> messages.forEach(msg -> msg.delete().queue()));
+            ChannelUtil.clearMessages(channel, 50);
 
             File mainRulesTitle = new File("main-rules.png");
             File roleplayRulesTitle = new File("roleplay-rules.png");

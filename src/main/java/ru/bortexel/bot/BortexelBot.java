@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import ru.bortexel.bot.commands.economy.EconomyCommandProvider;
 import ru.bortexel.bot.commands.main.MainCommandProvider;
 import ru.bortexel.bot.commands.roles.RoleCommandProvider;
-import ru.bortexel.bot.commands.rules.RulesCommandProvider;
+import ru.bortexel.bot.commands.info.InfoCommandProvider;
 import ru.bortexel.bot.commands.stuff.StuffCommandProvider;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
@@ -18,8 +18,6 @@ import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 
 import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +79,7 @@ public class BortexelBot {
         this.accessLevels = new AccessLevels(this);
         this.registerCommandProvider(new MainCommandProvider(this));
         this.registerCommandProvider(new EconomyCommandProvider(this));
-        this.registerCommandProvider(new RulesCommandProvider(this));
+        this.registerCommandProvider(new InfoCommandProvider(this));
         this.registerCommandProvider(new RoleCommandProvider(this));
         this.registerCommandProvider(new StuffCommandProvider(this));
         jda.addEventListener(new CommandListener(this));

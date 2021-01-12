@@ -23,17 +23,17 @@ public abstract class DefaultCommand implements Command {
 
     @Override
     public String getUsage() {
-        return "<игрок>";
+        return null;
     }
 
     @Override
     public String getUsageExample() {
-        return "`$skin RuscalWorld` выведет информацию о скине игрока RuscalWorld";
+        return null;
     }
 
     @Override
     public String getDescription() {
-        return "Показывает информацию о скине игрока на сервере";
+        return null;
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class DefaultCommand implements Command {
         return this.aliases.toArray(new String[aliases.size()]);
     }
 
-    public void addAlias(String alias) {
+    public final void addAlias(String alias) {
         this.aliases.add(alias);
     }
 

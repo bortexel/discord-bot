@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.models.BotRole;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
 
 public class EmbedUtil {
@@ -67,6 +68,14 @@ public class EmbedUtil {
         if (command.getAllowedChannelIds().length > 0)
             builder.addField("Разрешённые каналы", "<#" + String.join(">, <#", command.getAllowedChannelIds()) + ">", false);
 
+        return builder;
+    }
+
+    public static EmbedBuilder makeRoleInfo(BotRole role) {
+        EmbedBuilder builder = makeDefaultEmbed();
+        builder.setTitle(role.getTitle());
+        builder.setDescription(role.getDescription());
+        builder.setColor(role.getDiscordRole().getColor());
         return builder;
     }
 
