@@ -1,0 +1,27 @@
+version: "2"
+services:
+    mysql:
+        image: mysql:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: somepassword
+            MYSQL_DATABASE: bortexelbot
+        logging:
+            driver: "none"
+        restart: unless-stopped
+        volumes:
+            - mysql-data:/var/lib/mysql
+    bot:
+        image: registry.ruscalworld.ru/ruscalworld/bortexelbot:latest
+        depends_on:
+            - mysql
+        environment:
+            DB_HOST: mysql
+            DB_USER: root
+            DB_PASSWORD: somepassword
+            DB_DATABASE: bortexelbot
+            SENTRY_DSN: "${SENTRY_DSN}"
+            BOT_TOKEN: "${DISCORD_TOKEN}"
+            API_TOKEN: "${API_TOKEN}"
+        restart: unless-stopped
+volumes:
+    mysql-data:
