@@ -12,12 +12,14 @@ import ru.bortexel.bot.commands.stuff.StuffCommandProvider;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.Database;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 
-import javax.security.auth.login.LoginException;
 import java.awt.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +30,15 @@ public class BortexelBot {
 
     private final JDA jda;
     private final Bortexel4J api;
+    private final Database database;
     private AccessLevels accessLevels;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<CommandProvider> commandProviders = new ArrayList<>();
 
-    public BortexelBot(JDA jda, Bortexel4J api) {
+    public BortexelBot(JDA jda, Bortexel4J api, Database database) {
         this.jda = jda;
         this.api = api;
+        this.database = database;
     }
 
     public static void main(String[] args) {
@@ -47,6 +51,16 @@ public class BortexelBot {
             Sentry.init(sentryOptions -> sentryOptions.setDsn(sentryDsn));
         }
 
+        Database database;
+
+        try {
+            database = Database.setup();
+        } catch (Exception exception) {
+            BortexelBot.handleException(exception);
+            exception.printStackTrace();
+            return;
+        }
+
         JDABuilder builder = JDABuilder.createDefault(token);
         builder.setStatus(OnlineStatus.IDLE);
         builder.addEventListeners(new PollReactionListener());
@@ -57,7 +71,7 @@ public class BortexelBot {
             Bortexel4J client = Bortexel4J.login(apiToken);
             if (apiUrl != null) client.setApiUrl(apiUrl);
 
-            new BortexelBot(jda, client).run();
+            new BortexelBot(jda, client, database).run();
         } catch (Exception e) {
             Sentry.captureException(e);
         }
@@ -107,5 +121,9 @@ public class BortexelBot {
 
     public AccessLevels getAccessLevels() {
         return this.accessLevels;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 }
