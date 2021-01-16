@@ -3,6 +3,7 @@ package ru.bortexel.bot.commands.main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
@@ -10,6 +11,7 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
+import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.photo.Photo;
 import ru.ruscalworld.bortexel4j.models.season.Season;
 
@@ -29,18 +31,20 @@ public class PhotoCommand implements Command {
         String[] args = TextUtil.getCommandArgs(message);
         int seasonId = 0;
 
-        if (args.length >= 2) {
-            try {
-                seasonId = Integer.parseInt(args[1]);
-            } catch (Exception ignored) { }
-        }
+        if (args.length >= 2) try {
+            seasonId = Integer.parseInt(args[1]);
+        } catch (Exception ignored) { }
 
         if (seasonId == 0) {
             Photo.getAll(bot.getApiClient()).executeAsync(photos -> handlePhotos(photos, message.getChannel()));
-        } else Season.getByID(seasonId, bot.getApiClient()).executeAsync(season -> {
+        } else try {
+            Season season = Season.getByID(seasonId, bot.getApiClient()).execute();
             if (season == null) handlePhotos(Collections.emptyList(), message.getChannel());
             if (season != null) season.getPhotos(bot.getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), message.getChannel()));
-        });
+        } catch (NotFoundException ignored) {
+            MessageEmbed embed = EmbedUtil.makeError("Не удалось получить скриншоты", null).build();
+            message.getTextChannel().sendMessage(embed).queue();
+        }
     }
 
     private void handlePhotos(List<Photo> photos, MessageChannel channel) {
