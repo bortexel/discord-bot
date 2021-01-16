@@ -102,7 +102,7 @@
         <dependency>
             <groupId>ru.bortexel</groupId>
             <artifactId>Bortexel4J</artifactId>
-            <version>1.0.12</version>
+            <version>1.0.13</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -59,7 +59,7 @@ public class PhotoCommand implements Command {
             builder.setImage(photo.getUrl());
             builder.addField("Сезон", "" + photo.getSeason(), true);
             if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
-            if (photo.getAuthor() != null) builder.addField("Автор", photo.getAuthor(), true);
+            if (photo.getAuthorName() != null) builder.addField("Автор", photo.getAuthorName(), true);
 
             channel.sendMessage(builder.build()).queue();
         } catch (Exception e) {
