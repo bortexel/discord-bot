@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +47,7 @@ public class PollReactionListener extends ListenerAdapter {
 
             // Наконец отрисовываем эмбед с голосованием заново
             poll.rerender(message);
-        } catch (Exception e) {
+        } catch (InsufficientPermissionException ignored) { } catch (Exception e) {
             handleException(e);
         }
     }
@@ -59,7 +60,7 @@ public class PollReactionListener extends ListenerAdapter {
             if (message == null) return;
             Poll poll = Poll.getFromMessage(message);
             if (poll != null) poll.rerender(message);
-        } catch (Exception e) {
+        } catch (InsufficientPermissionException ignored) { } catch (Exception e) {
             handleException(e);
         }
     }
