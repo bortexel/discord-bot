@@ -55,4 +55,10 @@ public class AccessLevels {
             add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
         }});
     }
+
+    public AccessLevel getParliamentAccessLevel() {
+        return new AccessLevel(new ArrayList<Role>() {{
+            add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
+        }});
+    }
 }
