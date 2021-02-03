@@ -30,7 +30,7 @@ public abstract class RoleCommand implements Command {
 
         if (members.size() == 0) {
             EmbedBuilder builder = EmbedUtil.makeError("Укажите участников", "Вам необходимо упомянуть участников, " +
-                    "которым Вы хотите выдать роль " + role.getAsMention());
+                    "которым Вы хотите выдать роль " + role.getAsMention() + " или забрать её.");
             message.getChannel().sendMessage(builder.build()).queue();
             return;
         }
