@@ -48,4 +48,11 @@ public class AccessLevels {
             add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
         }});
     }
+
+    public AccessLevel getTaxDepartmentHeadAccessLevel() {
+        return new AccessLevel(new ArrayList<Role>() {{
+            add(jda.getRoleById(Roles.TAX_DEPARTMENT_HEAD_ROLE));
+            add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
+        }});
+    }
 }

@@ -24,6 +24,7 @@ public class RoleCommandProvider implements CommandProvider {
     public List<Command> getCommands() {
         return new ArrayList<Command>() {{
             add(new BuilderRoleCommand(bot));
+            add(new TDWorkerRoleCommand(bot));
         }};
     }
 }
