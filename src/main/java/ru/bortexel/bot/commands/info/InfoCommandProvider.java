@@ -23,7 +23,7 @@ public class InfoCommandProvider implements CommandProvider {
     public List<Command> getCommands() {
         return new ArrayList<Command>() {{
             add(new UpdateRulesCommand(bot));
-            add(new UpdateRolesCommand(bot));
+            add(new RoleInfoCommand(bot));
         }};
     }
 }

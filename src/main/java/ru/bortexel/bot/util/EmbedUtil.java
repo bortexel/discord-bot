@@ -1,6 +1,7 @@
 package ru.bortexel.bot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.Nullable;
@@ -8,6 +9,9 @@ import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.models.BotRole;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmbedUtil {
     public static EmbedBuilder makeError(@Nullable String title, String text) {
@@ -72,10 +76,26 @@ public class EmbedUtil {
     }
 
     public static EmbedBuilder makeRoleInfo(BotRole role) {
+        Role discordRole = role.getDiscordRole();
         EmbedBuilder builder = makeDefaultEmbed();
         builder.setTitle(role.getTitle());
         builder.setDescription(role.getDescription());
-        builder.setColor(role.getDiscordRole().getColor());
+        builder.setColor(discordRole.getColor());
+
+        if (role.getHeadmasterID() != null) {
+            Member headmaster = role.getHeadmaster().complete();
+            if (headmaster != null) builder.addField("Глава", headmaster.getAsMention(), false);
+        }
+
+        if (role.getJoinInfo() != null) builder.addField("Как вступить?", role.getJoinInfo(), false);
+
+        if (role.isShowMembers()) {
+            List<Member> members = discordRole.getGuild().getMembersWithRoles(discordRole);
+            List<String> mentions = new ArrayList<>();
+            for (Member member : members) mentions.add(member.getAsMention());
+            builder.addField("Участники - " + members.size(), String.join(",", mentions), false);
+        }
+
         return builder;
     }
 

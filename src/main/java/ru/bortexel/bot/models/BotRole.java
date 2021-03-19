@@ -1,7 +1,9 @@
 package ru.bortexel.bot.models;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.requests.RestAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.EmbedUtil;
 
@@ -11,17 +13,38 @@ import java.sql.SQLException;
 
 public class BotRole {
     private final int id;
-    private final String discordId;
+    private final String discordID;
     private String title;
     private String description;
+    private String joinInfo;
+    private String headmasterID;
+    private String messageID;
+    private boolean showMembers;
     private final BortexelBot bot;
 
-    public BotRole(int id, String discordId, String title, String description, BortexelBot bot) {
+    public BotRole(int id, String discordId, String title, String description, String joinInfo, String headmasterID, String messageID, boolean showMembers, BortexelBot bot) {
         this.id = id;
-        this.discordId = discordId;
+        this.discordID = discordId;
         this.title = title;
         this.description = description;
+        this.joinInfo = joinInfo;
+        this.headmasterID = headmasterID;
+        this.messageID = messageID;
+        this.showMembers = showMembers;
         this.bot = bot;
+    }
+
+    public static BotRole getByID(int id, BortexelBot bot) {
+        try {
+            PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("SELECT * FROM `roles` WHERE `id` = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) return getFromResult(resultSet, bot);
+        } catch (SQLException throwables) {
+            BortexelBot.handleException(throwables);
+        }
+
+        return null;
     }
 
     public static BotRole getByDiscordRole(Role role, BortexelBot bot) {
@@ -39,18 +62,24 @@ public class BotRole {
 
     private static BotRole getFromResult(ResultSet resultSet, BortexelBot bot) throws SQLException {
         int id = resultSet.getInt("id");
-        String discordId = resultSet.getString("discord_id");
+        String discordID = resultSet.getString("discord_id");
         String title = resultSet.getString("title");
         String description = resultSet.getString("description");
-        return new BotRole(id, discordId, title, description, bot);
+        String joinInfo = resultSet.getString("join_info");
+        String headmasterID = resultSet.getString("headmaster_id");
+        String messageID = resultSet.getString("message_id");
+        boolean showMembers = resultSet.getBoolean("show_members");
+        return new BotRole(id, discordID, title, description, joinInfo, headmasterID, messageID, showMembers, bot);
     }
 
     public boolean save() {
         try {
-            PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("UPDATE `roles` SET `title` = ?, `description` = ? WHERE `id` = ?");
+            PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("UPDATE `roles` SET `title` = ?, `description` = ?, `join_info` = ?, `headmaster_id` = ?, `message_id` = ?, `show_members` = ? WHERE `id` = ?");
             statement.setString(1, this.getTitle());
             statement.setString(2, this.getDescription());
-            statement.setInt(3, this.getId());
+            statement.setInt(3, this.getID());
+            statement.setString(4, this.getMessageID());
+            statement.setBoolean(5, this.isShowMembers());
             return statement.executeUpdate() != 0;
         } catch (SQLException exception) {
             BortexelBot.handleException(exception);
@@ -59,16 +88,16 @@ public class BotRole {
         return false;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
 
-    public String getDiscordId() {
-        return discordId;
+    public String getDiscordID() {
+        return discordID;
     }
 
     public Role getDiscordRole() {
-        return this.getBot().getJDA().getRoleById(this.getDiscordId());
+        return this.getBot().getJDA().getRoleById(this.getDiscordID());
     }
 
     public String getTitle() {
@@ -93,5 +122,41 @@ public class BotRole {
 
     public EmbedBuilder getInfoEmbed() {
         return EmbedUtil.makeRoleInfo(this);
+    }
+
+    public String getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
+    }
+
+    public boolean isShowMembers() {
+        return showMembers;
+    }
+
+    public void setShowMembers(boolean showMembers) {
+        this.showMembers = showMembers;
+    }
+
+    public String getJoinInfo() {
+        return joinInfo;
+    }
+
+    public void setJoinInfo(String joinInfo) {
+        this.joinInfo = joinInfo;
+    }
+
+    public String getHeadmasterID() {
+        return headmasterID;
+    }
+
+    public void setHeadmasterID(String headmasterID) {
+        this.headmasterID = headmasterID;
+    }
+
+    public RestAction<Member> getHeadmaster() {
+        return this.getDiscordRole().getGuild().retrieveMemberById(this.getHeadmasterID());
     }
 }

@@ -4,6 +4,9 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import ru.bortexel.bot.commands.economy.EconomyCommandProvider;
 import ru.bortexel.bot.commands.main.MainCommandProvider;
 import ru.bortexel.bot.commands.roles.RoleCommandProvider;
@@ -62,6 +65,9 @@ public class BortexelBot {
         JDABuilder builder = JDABuilder.createDefault(token);
         builder.setStatus(OnlineStatus.IDLE);
         builder.addEventListeners(new PollReactionListener());
+        builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
+        builder.setChunkingFilter(ChunkingFilter.ALL);
+        builder.setMemberCachePolicy(MemberCachePolicy.ALL);
 
         try {
             JDA jda = builder.build();
