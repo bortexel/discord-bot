@@ -77,9 +77,11 @@ public class BotRole {
             PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("UPDATE `roles` SET `title` = ?, `description` = ?, `join_info` = ?, `headmaster_id` = ?, `message_id` = ?, `show_members` = ? WHERE `id` = ?");
             statement.setString(1, this.getTitle());
             statement.setString(2, this.getDescription());
-            statement.setInt(3, this.getID());
-            statement.setString(4, this.getMessageID());
-            statement.setBoolean(5, this.isShowMembers());
+            statement.setString(3, this.getJoinInfo());
+            statement.setString(4, this.getHeadmasterID());
+            statement.setString(5, this.getMessageID());
+            statement.setBoolean(6, this.isShowMembers());
+            statement.setInt(7, this.getID());
             return statement.executeUpdate() != 0;
         } catch (SQLException exception) {
             BortexelBot.handleException(exception);
