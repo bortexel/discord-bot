@@ -3,9 +3,9 @@ package ru.bortexel.bot.util.rules;
 import java.awt.*;
 
 public class RuleBot {
-    public static final String MAIN_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/main.md";
-    public static final String ROLEPLAY_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/roleplay.md";
-    public static final String PLACES_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/places.md";
+    public static final String MAIN_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/master/rules/main.json";
+    public static final String ROLEPLAY_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/master/rules/roleplay.json";
+    public static final String PLACES_RULES_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/master/rules/places.json";
     public static final String MAIN_RULES_TITLE_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/rules-main.png";
     public static final String ROLEPLAY_RULES_TITLE_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/rules-rp.png";
     public static final String PLACES_RULES_TITLE_URL = "https://raw.githubusercontent.com/Bortexel/WebsiteContent/rules/rules-places.png";
