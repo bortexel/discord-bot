@@ -93,7 +93,7 @@ public class EmbedUtil {
             List<Member> members = discordRole.getGuild().getMembersWithRoles(discordRole);
             List<String> mentions = new ArrayList<>();
             for (Member member : members) mentions.add(member.getAsMention());
-            builder.addField("Участники - " + members.size(), String.join(", ", mentions), false);
+            builder.addField("Участники (" + members.size() + ")", String.join(", ", mentions), false);
         }
 
         return builder;
