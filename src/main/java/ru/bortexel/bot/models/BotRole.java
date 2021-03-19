@@ -2,7 +2,9 @@ package ru.bortexel.bot.models;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.EmbedUtil;
@@ -19,10 +21,11 @@ public class BotRole {
     private String joinInfo;
     private String headmasterID;
     private String messageID;
+    private String channelID;
     private boolean showMembers;
     private final BortexelBot bot;
 
-    public BotRole(int id, String discordId, String title, String description, String joinInfo, String headmasterID, String messageID, boolean showMembers, BortexelBot bot) {
+    public BotRole(int id, String discordId, String title, String description, String joinInfo, String headmasterID, String messageID, String channelID, boolean showMembers, BortexelBot bot) {
         this.id = id;
         this.discordID = discordId;
         this.title = title;
@@ -30,6 +33,7 @@ public class BotRole {
         this.joinInfo = joinInfo;
         this.headmasterID = headmasterID;
         this.messageID = messageID;
+        this.channelID = channelID;
         this.showMembers = showMembers;
         this.bot = bot;
     }
@@ -68,20 +72,22 @@ public class BotRole {
         String joinInfo = resultSet.getString("join_info");
         String headmasterID = resultSet.getString("headmaster_id");
         String messageID = resultSet.getString("message_id");
+        String channelID = resultSet.getString("channel_id");
         boolean showMembers = resultSet.getBoolean("show_members");
-        return new BotRole(id, discordID, title, description, joinInfo, headmasterID, messageID, showMembers, bot);
+        return new BotRole(id, discordID, title, description, joinInfo, headmasterID, messageID, channelID, showMembers, bot);
     }
 
     public boolean save() {
         try {
-            PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("UPDATE `roles` SET `title` = ?, `description` = ?, `join_info` = ?, `headmaster_id` = ?, `message_id` = ?, `show_members` = ? WHERE `id` = ?");
+            PreparedStatement statement = bot.getDatabase().getConnection().prepareStatement("UPDATE `roles` SET `title` = ?, `description` = ?, `join_info` = ?, `headmaster_id` = ?, `message_id` = ?, `channel_id` = ?, `show_members` = ? WHERE `id` = ?");
             statement.setString(1, this.getTitle());
             statement.setString(2, this.getDescription());
             statement.setString(3, this.getJoinInfo());
             statement.setString(4, this.getHeadmasterID());
             statement.setString(5, this.getMessageID());
-            statement.setBoolean(6, this.isShowMembers());
-            statement.setInt(7, this.getID());
+            statement.setString(6, this.getChannelID());
+            statement.setBoolean(7, this.isShowMembers());
+            statement.setInt(8, this.getID());
             return statement.executeUpdate() != 0;
         } catch (SQLException exception) {
             BortexelBot.handleException(exception);
@@ -134,6 +140,14 @@ public class BotRole {
         this.messageID = messageID;
     }
 
+    public String getChannelID() {
+        return channelID;
+    }
+
+    public void setChannelID(String channelID) {
+        this.channelID = channelID;
+    }
+
     public boolean isShowMembers() {
         return showMembers;
     }
@@ -160,5 +174,14 @@ public class BotRole {
 
     public RestAction<Member> getHeadmaster() {
         return this.getDiscordRole().getGuild().retrieveMemberById(this.getHeadmasterID());
+    }
+
+    public Message getInfoMessage() {
+        if (this.getMessageID() != null && this.getChannelID() != null) {
+            TextChannel oldChannel = this.getBot().getJDA().getTextChannelById(this.getChannelID());
+            if (oldChannel != null) return oldChannel.retrieveMessageById(this.getMessageID()).complete();
+        }
+
+        return null;
     }
 }

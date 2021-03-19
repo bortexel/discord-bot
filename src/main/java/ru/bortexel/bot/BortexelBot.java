@@ -16,6 +16,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.core.Database;
+import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
@@ -83,12 +84,15 @@ public class BortexelBot {
 
     public void run() {
         this.accessLevels = new AccessLevels(this);
+
         this.registerCommandProvider(new MainCommandProvider(this));
         this.registerCommandProvider(new EconomyCommandProvider(this));
         this.registerCommandProvider(new InfoCommandProvider(this));
         this.registerCommandProvider(new RoleCommandProvider(this));
         this.registerCommandProvider(new StuffCommandProvider(this));
+
         jda.addEventListener(new CommandListener(this));
+        jda.addEventListener(new RoleUpdateListener(this));
     }
 
     public static void handleException(Throwable throwable) {

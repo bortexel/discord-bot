@@ -40,13 +40,11 @@ public class RoleInfoCommand extends DefaultBotCommand {
 
         Message infoMessage = channel.sendMessage(botRole.getInfoEmbed().build()).complete();
         if (infoMessage != null) {
-            String oldMessageID = botRole.getMessageID();
-            if (oldMessageID != null) {
-                Message oldMessage = channel.retrieveMessageById(oldMessageID).complete();
-                if (oldMessage != null) oldMessage.delete().queue();
-            }
+            Message oldMessage = botRole.getInfoMessage();
+            if (oldMessage != null) oldMessage.delete().queue();
 
             botRole.setMessageID(infoMessage.getId());
+            botRole.setChannelID(channel.getId());
             botRole.save();
         }
     }
