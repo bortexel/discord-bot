@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:11
 
 WORKDIR /home/container
 ADD target/BortexelBot-1.0.jar .
