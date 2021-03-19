@@ -23,5 +23,15 @@ services:
             BOT_TOKEN: "${DISCORD_TOKEN}"
             API_TOKEN: "${API_TOKEN}"
         restart: unless-stopped
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+            - mysql
+        ports:
+            - 8088:80
+        environment:
+            PMA_HOST: mysql
+            MYSQL_USERNAME: root
+            MYSQL_ROOT_PASSWORD: somepassword
 volumes:
     mysql-data:
