@@ -82,12 +82,12 @@ public class EmbedUtil {
         builder.setDescription(role.getDescription());
         builder.setColor(discordRole.getColor());
 
+        if (role.getJoinInfo() != null) builder.addField("Как вступить?", role.getJoinInfo(), false);
+
         if (role.getHeadmasterID() != null) {
             Member headmaster = role.getHeadmaster().complete();
             if (headmaster != null) builder.addField("Глава", headmaster.getAsMention(), false);
         }
-
-        if (role.getJoinInfo() != null) builder.addField("Как вступить?", role.getJoinInfo(), false);
 
         if (role.isShowMembers()) {
             List<Member> members = discordRole.getGuild().getMembersWithRoles(discordRole);
