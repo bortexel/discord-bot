@@ -21,8 +21,9 @@ public class StuffCommandProvider implements CommandProvider {
 
     @Override
     public List<Command> getCommands() {
-        return new ArrayList<Command>() {{
+        return new ArrayList<>() {{
             add(new CowsayCommand(bot));
+            add(new MemeCommand(bot));
         }};
     }
 }

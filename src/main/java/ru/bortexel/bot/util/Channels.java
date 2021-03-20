@@ -9,4 +9,5 @@ public class Channels {
     public static final String TAX_DEPARTMENT_CHAT = "795304994345058335";
     public static final String JUDGES_CHAT = "795304909968113675";
     public static final String POLL_CHAT = "788851870663180298";
+    public static final String ART_CHANNEL = "665174761218899988";
 }
