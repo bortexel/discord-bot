@@ -42,13 +42,15 @@ public class MemeCommand extends DefaultBotCommand {
                 Random random = new Random(System.currentTimeMillis());
                 Message randomMessage = messages.get(random.nextInt(messages.size() - 1));
 
+                boolean attachments = false;
                 for (Message.Attachment attachment : randomMessage.getAttachments()) {
                     if (attachment.isImage()) {
+                        attachments = true;
                         builder.setImage(attachment.getUrl());
                     }
                 }
 
-                if (randomMessage.getAttachments().size() > 0 || depth == 50) {
+                if (attachments || depth == 50) {
                     User author = randomMessage.getAuthor();
                     builder.setTimestamp(randomMessage.getTimeCreated());
                     builder.setAuthor(author.getAsTag(), null, author.getAvatarUrl());
