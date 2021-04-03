@@ -15,20 +15,20 @@ public class AccessLevels {
     }
 
     public AccessLevel getAdministratorAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.ADMIN_ROLE));
         }});
     }
 
     public AccessLevel getModeratorAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.ADMIN_ROLE));
             add(jda.getRoleById(Roles.MODERATOR_ROLE));
         }});
     }
 
     public AccessLevel getHelperAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.ADMIN_ROLE));
             add(jda.getRoleById(Roles.MODERATOR_ROLE));
             add(jda.getRoleById(Roles.HELPER_ROLE));
@@ -36,28 +36,29 @@ public class AccessLevels {
     }
 
     public AccessLevel getSponsorAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.SPONSOR_ROLE));
+            add(jda.getRoleById(Roles.SUPPORTER_ROLE));
             add(jda.getRoleById(Roles.SERVER_BOOSTER_ROLE));
         }});
     }
 
     public AccessLevel getHeadBuilderAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.HEAD_BUILDER_ROLE));
             add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
         }});
     }
 
     public AccessLevel getTaxDepartmentHeadAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.TAX_DEPARTMENT_HEAD_ROLE));
             add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
         }});
     }
 
     public AccessLevel getParliamentAccessLevel() {
-        return new AccessLevel(new ArrayList<Role>() {{
+        return new AccessLevel(new ArrayList<>() {{
             add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
         }});
     }

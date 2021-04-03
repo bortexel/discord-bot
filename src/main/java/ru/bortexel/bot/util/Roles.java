@@ -12,6 +12,7 @@ public class Roles {
     public static final String TAX_DEPARTMENT_WORKER_ROLE = "794945062596378685";
     public static final String JUDGE_ROLE = "794944850000478218";
 
-    public static final String SPONSOR_ROLE = "651398861868367902";
+    public static final String SPONSOR_ROLE = "828006196401274900";
+    public static final String SUPPORTER_ROLE = "651398861868367902";
     public static final String SERVER_BOOSTER_ROLE = "645498320285990923";
 }
