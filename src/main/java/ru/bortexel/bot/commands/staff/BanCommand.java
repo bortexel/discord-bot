@@ -55,6 +55,26 @@ public class BanCommand extends DefaultBotCommand {
     }
 
     @Override
+    public String[] getAllowedChannelIds() {
+        return new String[] {};
+    }
+
+    @Override
+    public String getUsage() {
+        return "<игрок> <время> <причина>";
+    }
+
+    @Override
+    public String getUsageExample() {
+        return "`$ban RuscalWorld 10m 2.1` выдаст игроку `RuscalWorld` бан на 10 минут по причине `2.1`";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Блокирует аккаунт игрока на игровом сервере.";
+    }
+
+    @Override
     public int getMinArgumentCount() {
         return 3;
     }

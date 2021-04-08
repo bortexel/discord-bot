@@ -95,8 +95,8 @@ public class BortexelBot {
         this.registerCommandProvider(new EconomyCommandProvider(this));
         this.registerCommandProvider(new InfoCommandProvider(this));
         this.registerCommandProvider(new RoleCommandProvider(this));
-        this.registerCommandProvider(new StuffCommandProvider(this));
         this.registerCommandProvider(new StaffCommandProvider(this));
+        this.registerCommandProvider(new StuffCommandProvider(this));
 
         jda.addEventListener(new CommandListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
