@@ -34,7 +34,7 @@ public class BanListener extends BotListener {
             time = "на **" + TimeUtil.formatLength(delay / 1000 + 1) + "**";
         }
 
-        builder.setTitle("Игрок **" + ban.getUsername().replace("_", "\\_") + "** был забанен " + time);
+        builder.setTitle("**" + ban.getUsername().replace("_", "\\_") + "** был забанен " + time);
         builder.setFooter("Параметры могут быть изменены со временем. В таком случае администратор обязан оставить сообщение ниже.");
 
         builder.addField("Идентификатор", "" + ban.getID(), true);

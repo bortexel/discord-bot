@@ -23,6 +23,7 @@ public class StaffCommandProvider implements CommandProvider {
     public List<Command> getCommands() {
         return new ArrayList<>() {{
             add(new BanCommand(bot));
+            add(new WarningCommand(bot));
         }};
     }
 }

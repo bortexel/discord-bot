@@ -19,6 +19,7 @@ import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.core.Database;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.BanListener;
+import ru.bortexel.bot.listeners.bortexel.WarningListener;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
@@ -102,6 +103,7 @@ public class BortexelBot {
         jda.addEventListener(new RoleUpdateListener(this));
 
         this.getBroadcastingServer().registerListener(new BanListener(this));
+        this.getBroadcastingServer().registerListener(new WarningListener(this));
         this.getBroadcastingServer().connect();
     }
 
