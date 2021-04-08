@@ -10,4 +10,6 @@ public class Channels {
     public static final String JUDGES_CHAT = "795304909968113675";
     public static final String POLL_CHAT = "788851870663180298";
     public static final String ART_CHANNEL = "665174761218899988";
+    public static final String PUNISHMENTS_CHANNEL = "647110022857228288";
+    public static final String TEST_CHANNEL = "600592720599318528";
 }

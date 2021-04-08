@@ -60,7 +60,7 @@ public class PhotoCommand implements Command {
             Photo photo = photos.get(index);
 
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
-            builder.setImage(photo.getUrl());
+            builder.setImage(photo.getURL());
             builder.addField("Сезон", "" + photo.getSeason(), true);
             if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
             if (photo.getAuthorName() != null) builder.addField("Автор", photo.getAuthorName(), true);

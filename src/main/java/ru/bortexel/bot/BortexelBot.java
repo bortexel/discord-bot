@@ -11,15 +11,18 @@ import ru.bortexel.bot.commands.economy.EconomyCommandProvider;
 import ru.bortexel.bot.commands.main.MainCommandProvider;
 import ru.bortexel.bot.commands.roles.RoleCommandProvider;
 import ru.bortexel.bot.commands.info.InfoCommandProvider;
+import ru.bortexel.bot.commands.staff.StaffCommandProvider;
 import ru.bortexel.bot.commands.stuff.StuffCommandProvider;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.core.Database;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
+import ru.bortexel.bot.listeners.bortexel.BanListener;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
+import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,11 +39,13 @@ public class BortexelBot {
     private AccessLevels accessLevels;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<CommandProvider> commandProviders = new ArrayList<>();
+    private final BroadcastingServer broadcastingServer;
 
-    public BortexelBot(JDA jda, Bortexel4J api, Database database) {
+    public BortexelBot(JDA jda, Bortexel4J api, Database database, BroadcastingServer broadcastingServer) {
         this.jda = jda;
         this.api = api;
         this.database = database;
+        this.broadcastingServer = broadcastingServer;
     }
 
     public static void main(String[] args) {
@@ -48,10 +53,10 @@ public class BortexelBot {
         String apiToken = System.getenv("API_TOKEN");
         String sentryDsn = System.getenv("SENTRY_DSN");
         String apiUrl = System.getenv("API_URL");
+        String bcsUrl = System.getenv("BCS_URL");
 
-        if (sentryDsn != null) {
-            Sentry.init(sentryOptions -> sentryOptions.setDsn(sentryDsn));
-        }
+        if (bcsUrl == null) bcsUrl = "wss://bcs.bortexel.ru/v1/websocket";
+        if (sentryDsn != null) Sentry.init(sentryOptions -> sentryOptions.setDsn(sentryDsn));
 
         Database database;
 
@@ -75,8 +80,9 @@ public class BortexelBot {
 
             Bortexel4J client = Bortexel4J.login(apiToken);
             if (apiUrl != null) client.setApiUrl(apiUrl);
+            BroadcastingServer broadcastingServer = client.getBroadcastingServer(bcsUrl);
 
-            new BortexelBot(jda, client, database).run();
+            new BortexelBot(jda, client, database, broadcastingServer).run();
         } catch (Exception e) {
             Sentry.captureException(e);
         }
@@ -90,9 +96,13 @@ public class BortexelBot {
         this.registerCommandProvider(new InfoCommandProvider(this));
         this.registerCommandProvider(new RoleCommandProvider(this));
         this.registerCommandProvider(new StuffCommandProvider(this));
+        this.registerCommandProvider(new StaffCommandProvider(this));
 
         jda.addEventListener(new CommandListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
+
+        this.getBroadcastingServer().registerListener(new BanListener(this));
+        this.getBroadcastingServer().connect();
     }
 
     public static void handleException(Throwable throwable) {
@@ -133,5 +143,9 @@ public class BortexelBot {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public BroadcastingServer getBroadcastingServer() {
+        return broadcastingServer;
     }
 }
