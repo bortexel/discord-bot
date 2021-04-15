@@ -32,7 +32,7 @@ public class WarningListener extends BotListener {
         JDA jda = this.getBot().getJDA();
         Account.getByID(warning.getAdminID(), this.getBot().getApiClient())
                 .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
-                    builder.setAuthor(warning.getAdmin(), null, user.getAvatarUrl());
+                    builder.setAuthor(warning.getAdminName(), null, user.getAvatarUrl());
                     TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
                     if (channel != null) channel.sendMessage(builder.build()).queue();
                 }));
