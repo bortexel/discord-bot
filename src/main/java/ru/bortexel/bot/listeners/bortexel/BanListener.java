@@ -24,6 +24,7 @@ public class BanListener extends BotListener {
     @Override
     public void onBanCreated(GenericBanEvent event) {
         Ban ban = event.getPayload();
+        System.out.println("Received info about ban #" + ban.getID());
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.decode("#AA0000"));
@@ -41,7 +42,7 @@ public class BanListener extends BotListener {
         builder.addField("Причина", ban.getReason(), true);
 
         if (!ban.isPermanent() && ban.getExpiresAt() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("E, dd MMMM yyyy HH:mm:ss", new Locale("ru"));
+            SimpleDateFormat format = new SimpleDateFormat("E, dd MMMM yyyy HH:mm:ss", new Locale("ru", "RU"));
             String expires = format.format(ban.getExpiresAt());
             expires = expires.substring(0, 1).toUpperCase(Locale.ROOT) + expires.substring(1);
             builder.addField("Истекает", expires, true);

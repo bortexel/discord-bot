@@ -19,6 +19,7 @@ public class WarningListener extends BotListener {
     @Override
     public void onWarningCreated(GenericWarningEvent event) {
         Warning warning = event.getPayload();
+        System.out.println("Received info about warning #" + warning.getID());
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.decode("#FF5555"));
