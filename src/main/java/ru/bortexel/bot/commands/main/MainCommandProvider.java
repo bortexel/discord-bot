@@ -21,8 +21,9 @@ public class MainCommandProvider implements CommandProvider {
 
     @Override
     public List<Command> getCommands() {
-        return new ArrayList<Command>() {{
+        return new ArrayList<>() {{
             add(new HelpCommand(bot));
+            add(new ProfileCommand(bot));
             add(new PhotoCommand(bot));
             add(new PollCommand(bot));
             add(new PingCommand());

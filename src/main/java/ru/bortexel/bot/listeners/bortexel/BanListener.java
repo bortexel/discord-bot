@@ -42,8 +42,7 @@ public class BanListener extends BotListener {
         builder.addField("Причина", ban.getReason(), true);
 
         if (!ban.isPermanent() && ban.getExpiresAt() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("E, dd MMMM yyyy HH:mm:ss", new Locale("ru", "RU"));
-            String expires = format.format(ban.getExpiresAt());
+            String expires = TimeUtil.getDefaultDateFormat().format(ban.getExpiresAt());
             expires = expires.substring(0, 1).toUpperCase(Locale.ROOT) + expires.substring(1);
             builder.addField("Истекает", expires, true);
         }

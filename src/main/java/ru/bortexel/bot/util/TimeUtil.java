@@ -1,7 +1,9 @@
 package ru.bortexel.bot.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TimeUtil {
     /**
@@ -209,5 +211,9 @@ public class TimeUtil {
         }
 
         return res;
+    }
+
+    public static SimpleDateFormat getDefaultDateFormat() {
+        return new SimpleDateFormat("E, dd MMMM yyyy HH:mm:ss", new Locale("ru", "RU"));
     }
 }
