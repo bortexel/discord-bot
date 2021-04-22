@@ -28,7 +28,10 @@ public class MemeCommand extends DefaultBotCommand {
 
         MessageHistory history = channel.getHistoryFromBeginning(1).complete();
         Message firstMessage = history.getRetrievedHistory().get(0);
-        long latestMessageId = channel.getLatestMessageIdLong();
+
+        List<Message> latest = channel.getHistory().retrievePast(1).complete();
+        long latestMessageId = latest.get(latest.size() - 1).getIdLong();
+
         long id = new RandomDataGenerator().nextLong(firstMessage.getIdLong(), latestMessageId);
 
         channel.getHistoryAround(id, 100).queue(requestedHistory -> {
