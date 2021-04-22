@@ -1,32 +1,15 @@
 package ru.bortexel.bot.commands.main;
 
 import ru.bortexel.bot.BortexelBot;
-import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.DefaultCommandProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainCommandProvider implements CommandProvider {
-    private final BortexelBot bot;
-
+public class MainCommandProvider extends DefaultCommandProvider {
     public MainCommandProvider(BortexelBot bot) {
-        this.bot = bot;
-    }
-
-    @Override
-    public String getName() {
-        return "Основные";
-    }
-
-    @Override
-    public List<Command> getCommands() {
-        return new ArrayList<>() {{
-            add(new HelpCommand(bot));
-            add(new ProfileCommand(bot));
-            add(new PhotoCommand(bot));
-            add(new PollCommand(bot));
-            add(new PingCommand());
-        }};
+        super(bot, "Основные");
+        this.registerCommand(new HelpCommand(this.getBot()));
+        this.registerCommand(new ProfileCommand(this.getBot()));
+        this.registerCommand(new PhotoCommand(this.getBot()));
+        this.registerCommand(new PollCommand(this.getBot()));
+        this.registerCommand(new PingCommand());
     }
 }

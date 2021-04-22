@@ -1,29 +1,12 @@
 package ru.bortexel.bot.commands.stuff;
 
 import ru.bortexel.bot.BortexelBot;
-import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.DefaultCommandProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class StuffCommandProvider implements CommandProvider {
-    private final BortexelBot bot;
-
+public class StuffCommandProvider extends DefaultCommandProvider {
     public StuffCommandProvider(BortexelBot bot) {
-        this.bot = bot;
-    }
-
-    @Override
-    public String getName() {
-        return "Разное";
-    }
-
-    @Override
-    public List<Command> getCommands() {
-        return new ArrayList<>() {{
-            add(new CowsayCommand(bot));
-            add(new MemeCommand(bot));
-        }};
+        super(bot, "Разное");
+        this.registerCommand(new CowsayCommand(this.getBot()));
+        this.registerCommand(new MemeCommand(this.getBot()));
     }
 }

@@ -1,29 +1,12 @@
 package ru.bortexel.bot.commands.staff;
 
 import ru.bortexel.bot.BortexelBot;
-import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.DefaultCommandProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class StaffCommandProvider implements CommandProvider {
-    private final BortexelBot bot;
-
+public class StaffCommandProvider extends DefaultCommandProvider {
     public StaffCommandProvider(BortexelBot bot) {
-        this.bot = bot;
-    }
-
-    @Override
-    public String getName() {
-        return "Модерация";
-    }
-
-    @Override
-    public List<Command> getCommands() {
-        return new ArrayList<>() {{
-            add(new BanCommand(bot));
-            add(new WarningCommand(bot));
-        }};
+        super(bot, "Модерация");
+        this.registerCommand(new BanCommand(this.getBot()));
+        this.registerCommand(new WarningCommand(this.getBot()));
     }
 }
