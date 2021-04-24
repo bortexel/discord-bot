@@ -70,32 +70,39 @@ public class CommandListener extends BotListener {
             Command command = this.getBot().getCommand(event.getName());
             if (command == null || command.getSlashCommandData() == null) return;
 
-            CommandHook hook = event.getHook();
-            event.acknowledge(command.isEphemeral()).queue();
-            hook.setEphemeral(command.isEphemeral());
-
             if (command.getAccessLevel() != null) {
                 if (event.getMember() == null || event.getGuild() == null) {
-                    hook.sendMessage("Эта команда недоступна в личных сообщения.").queue();
+                    sendError(event, "Эта команда недоступна в личных сообщения.");
                     return;
                 }
 
                 if (!command.getAccessLevel().hasAccess(event.getMember())) {
-                    hook.sendMessage("У Вас недостаточно прав для выполнения данной команды.").queue();
+                    sendError(event, "У Вас недостаточно прав для выполнения данной команды.");
                     return;
                 }
             }
 
             if (event.getMember() != null && !event.getMember().isOwner() && command.getAllowedChannelIds().length > 0 && !command.isEphemeral()) {
                 if (!Arrays.asList(command.getAllowedChannelIds()).contains(event.getChannel().getId())) {
-                    hook.sendMessage("Эта команда не может быть выполнена здесь.").queue();
+                    sendError(event, "Эта команда не может быть выполнена здесь.");
                     return;
                 }
             }
+
+            CommandHook hook = event.getHook();
+            event.acknowledge(command.isEphemeral()).queue();
+            hook.setEphemeral(command.isEphemeral());
 
             command.onSlashCommand(event, hook);
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }
+    }
+
+    public void sendError(SlashCommandEvent event, String message) {
+        CommandHook hook = event.getHook();
+        hook.setEphemeral(true);
+        event.acknowledge(true).queue();
+        hook.sendMessage(message).queue();
     }
 }
