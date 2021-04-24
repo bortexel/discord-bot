@@ -1,17 +1,19 @@
 package ru.bortexel.bot.commands.roles;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class RoleCommand extends DefaultBotCommand {
@@ -21,17 +23,26 @@ public abstract class RoleCommand extends DefaultBotCommand {
 
     @Override
     public void onCommand(Message message) {
+        MessageEmbed response = manageRoles(message.getGuild(), message.getMentionedMembers());
+        message.reply(response).queue();
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        SlashCommandEvent.OptionData userOption = event.getOption("user");
+        assert userOption != null;
+        MessageEmbed response = manageRoles(event.getGuild(), Collections.singletonList(userOption.getAsMember()));
+        hook.sendMessage(response).queue();
+    }
+
+    private MessageEmbed manageRoles(Guild guild, List<Member> members) {
         Role role = this.getRole();
         assert role != null;
-
-        List<Member> members = message.getMentionedMembers();
-        Guild guild = message.getGuild();
 
         if (members.size() == 0) {
             EmbedBuilder builder = EmbedUtil.makeError("Укажите участников", "Вам необходимо упомянуть участников, " +
                     "которым Вы хотите выдать роль " + role.getAsMention() + " или забрать её.");
-            message.getChannel().sendMessage(builder.build()).queue();
-            return;
+            return builder.build();
         }
 
         List<Member> granted = new ArrayList<>();
@@ -61,7 +72,14 @@ public abstract class RoleCommand extends DefaultBotCommand {
         builder.setTitle("Выдача ролей");
         builder.setDescription((granted.size() > 0 ? grantedText + "\n" : "") + (revoked.size() > 0 ? revokedText + "\n" : ""));
 
-        message.getChannel().sendMessage(builder.build()).queue();
+        return builder.build();
+    }
+
+    @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this)
+                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.USER, "user", "Участник")
+                        .setRequired(true));
     }
 
     @Override
@@ -72,14 +90,14 @@ public abstract class RoleCommand extends DefaultBotCommand {
     @Override
     public String getUsageExample() {
         assert this.getRole() != null;
-        return "`" + BortexelBot.COMMAND_PREFIX + this.getName() + " @RuscalWorld" + "` выдаст роль " +
-                this.getRole().getAsMention() + " участнику <@496297262952218638>, если у него её нет.";
+        return "`" + BortexelBot.COMMAND_PREFIX + this.getName() + " @RuscalWorld" + "` выдаст роль \"" +
+                this.getRole().getName() + "\" участнику <@496297262952218638>, если у него её нет.";
     }
 
     @Override
     public String getDescription() {
         assert this.getRole() != null;
-        return "Выдаёт роль " + this.getRole().getAsMention() + " указанному участнику, либо забирает её, если она уже есть у него.";
+        return "Выдаёт роль \"" + this.getRole().getName() + "\" указанному участнику, либо забирает её, если она уже есть у него.";
     }
 
     @Override
