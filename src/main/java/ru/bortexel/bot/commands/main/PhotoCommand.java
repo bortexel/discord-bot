@@ -1,17 +1,22 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
+import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.photo.Photo;
 import ru.ruscalworld.bortexel4j.models.season.Season;
@@ -39,23 +44,35 @@ public class PhotoCommand extends DefaultBotCommand {
             seasonId = Integer.parseInt(args[1]);
         } catch (Exception ignored) { }
 
-        if (seasonId == 0) {
-            Photo.getAll(this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, message.getChannel()));
+        getPhotos(seasonId, response -> message.reply(response).queue());
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        SlashCommandEvent.OptionData seasonOption = event.getOption("season");
+        int seasonID = 0;
+        if (seasonOption != null) seasonID = (int) seasonOption.getAsLong();
+        getPhotos(seasonID, response -> hook.sendMessage(response).queue());
+    }
+
+    private void getPhotos(int seasonID, Callback<MessageEmbed> callback) {
+        if (seasonID == 0) {
+            Photo.getAll(this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, callback));
         } else try {
-            Season season = Season.getByID(seasonId, this.getBot().getApiClient()).execute();
-            if (season == null) handlePhotos(Collections.emptyList(), message.getChannel());
-            if (season != null) season.getPhotos(this.getBot().getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), message.getChannel()));
+            Season season = Season.getByID(seasonID, this.getBot().getApiClient()).execute();
+            if (season == null) handlePhotos(Collections.emptyList(), callback);
+            if (season != null) season.getPhotos(this.getBot().getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), callback));
         } catch (NotFoundException ignored) {
             MessageEmbed embed = EmbedUtil.makeError("Не удалось получить скриншоты", null).build();
-            message.getTextChannel().sendMessage(embed).queue();
+            callback.handle(embed);
         }
     }
 
-    private void handlePhotos(List<Photo> photos, MessageChannel channel) {
+    private void handlePhotos(List<Photo> photos, Callback<MessageEmbed> callback) {
         try {
             if (photos == null || photos.size() == 0) {
                 EmbedBuilder builder = EmbedUtil.makeError("Неизвестная ошибка", "Не удалось получить скриншоты с сайта");
-                channel.sendMessage(builder.build()).queue();
+                callback.handle(builder.build());
                 return;
             }
 
@@ -69,10 +86,16 @@ public class PhotoCommand extends DefaultBotCommand {
             if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
             if (photo.getAuthorName() != null) builder.addField("Автор", photo.getAuthorName(), true);
 
-            channel.sendMessage(builder.build()).queue();
+            callback.handle(builder.build());
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }
+    }
+
+    @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this)
+                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.INTEGER, "season", "Номер сезона"));
     }
 
     @Override

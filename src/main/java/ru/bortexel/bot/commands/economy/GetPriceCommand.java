@@ -25,7 +25,7 @@ public class GetPriceCommand extends DefaultBotCommand {
     @Override
     public void onCommand(Message message) {
         String[] args = TextUtil.getCommandArgs(message);
-        getPrice(args[1], response -> message.getTextChannel().sendMessage(response).queue());
+        getPrice(args[1], response -> message.reply(response).queue());
     }
 
     @Override
