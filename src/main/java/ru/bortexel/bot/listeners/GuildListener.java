@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandProvider;
@@ -29,7 +30,7 @@ public class GuildListener extends BotListener {
             }
         }
 
-        System.out.println("Registering commands for guild \"" + guild.getName() + "\"");
+        LoggerFactory.getLogger(this.getClass()).info("Registering commands for guild \"" + guild.getName() + "\"");
         CommandUpdateAction commands = guild.updateCommands();
         commands.addCommands(slashCommands).queue();
     }
