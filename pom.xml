@@ -20,6 +20,14 @@
             <url>https://jcenter.bintray.com/</url>
         </repository>
         <repository>
+            <id>m2-dv8tion</id>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>bortexel-github</id>
             <url>https://maven.pkg.github.com/bortexel/bortexel4j</url>
         </repository>
@@ -90,9 +98,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.2.0_225</version>
+            <groupId>com.github.dv8fromtheworld</groupId>
+            <artifactId>jda</artifactId>
+            <version>4e02960</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

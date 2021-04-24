@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.io.FileUtils;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.ChannelUtil;
@@ -16,11 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class UpdateRulesCommand implements Command {
-    private final BortexelBot bot;
-
-    public UpdateRulesCommand(BortexelBot bot) {
-        this.bot = bot;
+public class UpdateRulesCommand extends DefaultBotCommand {
+    protected UpdateRulesCommand(BortexelBot bot) {
+        super("updaterules", bot);
     }
 
     @Override
@@ -59,11 +58,6 @@ public class UpdateRulesCommand implements Command {
     }
 
     @Override
-    public String getName() {
-        return "updaterules";
-    }
-
-    @Override
     public String getUsage() {
         return null;
     }
@@ -79,18 +73,13 @@ public class UpdateRulesCommand implements Command {
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[0];
-    }
-
-    @Override
     public String[] getAllowedChannelIds() {
         return new String[] { Channels.RULES_CHANNEL };
     }
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.bot.getAccessLevels().getAdministratorAccessLevel();
+        return this.getBot().getAccessLevels().getAdministratorAccessLevel();
     }
 
     @Override

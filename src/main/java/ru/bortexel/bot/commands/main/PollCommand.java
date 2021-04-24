@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.AccessLevels;
@@ -17,11 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PollCommand implements Command {
-    private final BortexelBot bot;
-
-    public PollCommand(BortexelBot bot) {
-        this.bot = bot;
+public class PollCommand extends DefaultBotCommand {
+    protected PollCommand(BortexelBot bot) {
+        super("poll", bot);
     }
 
     @Override
@@ -80,11 +79,6 @@ public class PollCommand implements Command {
     }
 
     @Override
-    public String getName() {
-        return "poll";
-    }
-
-    @Override
     public String getUsage() {
         return "<вопрос>\n[эмодзи] <название варианта>\n[эмодзи] <название варианта>\n...\n[%multiple]";
     }
@@ -100,19 +94,14 @@ public class PollCommand implements Command {
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[0];
-    }
-
-    @Override
     public String[] getAllowedChannelIds() {
         return new String[] { Channels.BOTS_CHANNEL, Channels.PARLIAMENT_CHAT, Channels.ADMIN_CHAT, Channels.POLL_CHAT };
     }
 
     @Override
     public AccessLevel getAccessLevel() {
-        AccessLevels levels = bot.getAccessLevels();
-        return AccessLevel.make(bot, levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
+        AccessLevels levels = this.getBot().getAccessLevels();
+        return AccessLevel.make(this.getBot(), levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
     }
 
     @Override

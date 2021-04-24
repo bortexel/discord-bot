@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.EmbedUtil;
@@ -13,11 +14,9 @@ import ru.bortexel.bot.util.EmbedUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RoleCommand implements Command {
-    private final String name;
-
-    public RoleCommand(String name) {
-        this.name = name;
+public abstract class RoleCommand extends DefaultBotCommand {
+    public RoleCommand(String name, BortexelBot bot) {
+        super(name, bot);
     }
 
     @Override
@@ -66,11 +65,6 @@ public abstract class RoleCommand implements Command {
     }
 
     @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
     public String getUsage() {
         return "<@участник>";
     }
@@ -86,11 +80,6 @@ public abstract class RoleCommand implements Command {
     public String getDescription() {
         assert this.getRole() != null;
         return "Выдаёт роль " + this.getRole().getAsMention() + " указанному участнику, либо забирает её, если она уже есть у него.";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[0];
     }
 
     @Override

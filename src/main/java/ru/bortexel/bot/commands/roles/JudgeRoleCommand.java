@@ -7,16 +7,13 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.Roles;
 
 public class JudgeRoleCommand extends RoleCommand {
-    private final BortexelBot bot;
-
     public JudgeRoleCommand(BortexelBot bot) {
-        super("judge");
-        this.bot = bot;
+        super("judge", bot);
     }
 
     @Override
     protected Role getRole() {
-        return this.bot.getJDA().getRoleById(Roles.JUDGE_ROLE);
+        return this.getBot().getJDA().getRoleById(Roles.JUDGE_ROLE);
     }
 
     @Override
@@ -26,6 +23,6 @@ public class JudgeRoleCommand extends RoleCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.bot.getAccessLevels().getParliamentAccessLevel();
+        return this.getBot().getAccessLevels().getParliamentAccessLevel();
     }
 }

@@ -1,73 +1,84 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.entities.Command.OptionType;
+import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-import java.util.Objects;
 
-public class HelpCommand implements Command {
-    private final BortexelBot bot;
+public class HelpCommand extends DefaultBotCommand {
+    protected HelpCommand(BortexelBot bot) {
+        super("help", bot);
 
-    public HelpCommand(BortexelBot bot) {
-        this.bot = bot;
+        this.addAlias("помощь");
+        this.addAlias("хелп");
     }
 
     @Override
     public void onCommand(Message message) {
-        try {
-            String[] args = TextUtil.getCommandArgs(message);
-            MessageChannel channel = message.getChannel();
-
-            EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
-            if (args.length == 1) {
-                builder.setTitle("Команды");
-
-                for (CommandProvider provider : bot.getCommandProviders()) {
-                    StringBuilder commands = new StringBuilder();
-                    int i = 0;
-
-                    for (Command command : provider.getCommands()) {
-                        if (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(message.getMember()))
-                            continue;
-                        i++;
-                        if (i != 1) commands.append("\n");
-                        commands.append("`").append(BortexelBot.COMMAND_PREFIX).append(command.getName()).append("`");
-                        if (command.getDescription() != null) commands.append(" - ").append(command.getDescription());
-                    }
-
-                    if (i != 0) builder.addField(provider.getName(), commands.toString(), false);
-                }
-
-                channel.sendMessage(builder.build()).queue();
-            } else if (args.length > 1) {
-                Command command = bot.getCommand(args[1]);
-                if (command == null || (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(message.getMember()))) {
-                    MessageEmbed messageEmbed = EmbedUtil.makeError("Команда не найдена", "Указанная Вами команда не существует, " +
-                            "либо у Вас недостаточно прав для просмотра информации о её использовании.").build();
-                    channel.sendMessage(messageEmbed).queue();
-                    return;
-                }
-
-                builder = EmbedUtil.makeCommandInfo(command);
-                channel.sendMessage(builder.build()).queue();
-            }
-        } catch (Exception e) {
-            BortexelBot.handleException(e);
-        }
+        String[] args = TextUtil.getCommandArgs(message);
+        MessageChannel channel = message.getChannel();
+        Member member = message.getMember();
+        if (args.length == 1) channel.sendMessage(getHelp(member, null)).queue();
+        else channel.sendMessage(getHelp(member, args[1])).queue();
     }
 
     @Override
-    public String getName() {
-        return "help";
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        Member member = event.getMember();
+        SlashCommandEvent.OptionData commandOption = event.getOption("command");
+        if (commandOption == null) hook.sendMessage(getHelp(member, null)).queue();
+        else hook.sendMessage(getHelp(member, commandOption.getAsString())).queue();
+    }
+
+    private MessageEmbed getHelp(Member member, @Nullable String commandName) {
+        EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
+
+        if (commandName == null) {
+            builder.setTitle("Команды");
+
+            for (CommandProvider provider : this.getBot().getCommandProviders()) {
+                StringBuilder commands = new StringBuilder();
+                int i = 0;
+
+                for (Command command : provider.getCommands()) {
+                    if (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member)) continue;
+                    i++;
+                    if (i != 1) commands.append("\n");
+                    commands.append("`").append(BortexelBot.COMMAND_PREFIX).append(command.getName()).append("`");
+                    if (command.getDescription() != null) commands.append(" - ").append(command.getDescription());
+                }
+
+                if (i != 0) builder.addField(provider.getName(), commands.toString(), false);
+            }
+        } else {
+            Command command = this.getBot().getCommand(commandName);
+            if (command == null || (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member))) {
+                return EmbedUtil.makeError("Команда не найдена", "Указанная Вами команда не существует, " +
+                        "либо у Вас недостаточно прав для просмотра информации о её использовании.").build();
+            }
+
+            builder = EmbedUtil.makeCommandInfo(command);
+        }
+
+        return builder.build();
+    }
+
+    @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this)
+                .addOption(new CommandUpdateAction.OptionData(OptionType.STRING, "command", "Команда"));
     }
 
     @Override
@@ -83,11 +94,6 @@ public class HelpCommand implements Command {
     @Override
     public String getDescription() {
         return "Отображает описание команд";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[] { "помощь", "хелп" };
     }
 
     @Override

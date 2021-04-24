@@ -1,13 +1,16 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
-import ru.bortexel.bot.util.Channels;
-import ru.bortexel.bot.util.EmbedUtil;
-import ru.bortexel.bot.util.TextUtil;
-import ru.bortexel.bot.util.TimeUtil;
+import ru.bortexel.bot.util.*;
+import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.profile.Profile;
 import ru.ruscalworld.bortexel4j.util.BortexelSkins;
@@ -25,6 +28,17 @@ public class ProfileCommand extends DefaultBotCommand {
     @Override
     public void onCommand(Message message) {
         String username = TextUtil.getCommandArgs(message)[1];
+        getProfile(username, response -> message.getTextChannel().sendMessage(response).queue());
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        SlashCommandEvent.OptionData usernameOption = event.getOption("username");
+        assert usernameOption != null;
+        getProfile(usernameOption.getAsString(), response -> hook.sendMessage(response).queue());
+    }
+
+    private void getProfile(String username, Callback<MessageEmbed> callback) {
         Profile.getByUserName(username).executeAsync(profile -> {
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
             builder.setAuthor(profile.getUsername(), null, BortexelSkins.getAvatarURL(profile.getUsername(), true));
@@ -33,7 +47,7 @@ public class ProfileCommand extends DefaultBotCommand {
                     ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
                     : "Никогда", true);
             builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
-            message.getTextChannel().sendMessage(builder.build()).queue();
+            callback.handle(builder.build());
         }, error -> {
             EmbedBuilder builder;
             if (error instanceof NotFoundException) {
@@ -43,8 +57,15 @@ public class ProfileCommand extends DefaultBotCommand {
                 builder = EmbedUtil.makeError("Не удалось получить профиль", "При получении профиля произошла непредвиденная ошибка.");
                 BortexelBot.handleException(error);
             }
-            message.getTextChannel().sendMessage(builder.build()).queue();
+            callback.handle(builder.build());
         });
+    }
+
+    @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this)
+                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.STRING, "username", "Никнейм игрока на сервере")
+                        .setRequired(true));
     }
 
     @Override

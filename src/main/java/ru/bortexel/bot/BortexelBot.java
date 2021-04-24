@@ -4,7 +4,9 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import ru.bortexel.bot.commands.economy.EconomyCommandProvider;
@@ -17,6 +19,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.CommandProvider;
 import ru.bortexel.bot.core.Database;
+import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.BanListener;
 import ru.bortexel.bot.listeners.bortexel.WarningListener;
@@ -27,6 +30,7 @@ import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,6 +109,7 @@ public class BortexelBot {
 
         jda.addEventListener(new CommandListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
+        jda.addEventListener(new GuildListener(this));
 
         this.getBroadcastingServer().registerListener(new BanListener(this));
         this.getBroadcastingServer().registerListener(new WarningListener(this));

@@ -7,16 +7,14 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.Roles;
 
 public class TDWorkerRoleCommand extends RoleCommand {
-    private final BortexelBot bot;
 
     public TDWorkerRoleCommand(BortexelBot bot) {
-        super("tdworker");
-        this.bot = bot;
+        super("tdworker", bot);
     }
 
     @Override
     protected Role getRole() {
-        return this.bot.getJDA().getRoleById(Roles.TAX_DEPARTMENT_WORKER_ROLE);
+        return this.getBot().getJDA().getRoleById(Roles.TAX_DEPARTMENT_WORKER_ROLE);
     }
 
     @Override
@@ -26,6 +24,6 @@ public class TDWorkerRoleCommand extends RoleCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.bot.getAccessLevels().getTaxDepartmentHeadAccessLevel();
+        return this.getBot().getAccessLevels().getTaxDepartmentHeadAccessLevel();
     }
 }

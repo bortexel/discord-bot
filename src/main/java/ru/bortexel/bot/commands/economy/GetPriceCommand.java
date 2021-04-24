@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.*;
@@ -13,11 +14,10 @@ import ru.ruscalworld.bortexel4j.models.economy.Item;
 
 import java.util.List;
 
-public class GetPriceCommand implements Command {
-    private final BortexelBot bot;
-
-    public GetPriceCommand(BortexelBot bot) {
-        this.bot = bot;
+public class GetPriceCommand extends DefaultBotCommand {
+    protected GetPriceCommand(BortexelBot bot) {
+        super("price", bot);
+        this.addAlias("стоимость");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class GetPriceCommand implements Command {
             Item item;
 
             try {
-                item = Item.getByID(id, bot.getApiClient()).execute();
+                item = Item.getByID(id, this.getBot().getApiClient()).execute();
             } catch (NotFoundException e) {
                 MessageEmbed messageEmbed = EmbedUtil.makeError("Предмет не найден", "Указанный предмет не найден в базе данных. " +
                         "Проверьте правильность написания названия и повторите попытку.").build();
@@ -38,7 +38,7 @@ public class GetPriceCommand implements Command {
                 return;
             }
 
-            item.getPrices(bot.getApiClient()).executeAsync(prices -> {
+            item.getPrices(this.getBot().getApiClient()).executeAsync(prices -> {
                 if (prices.getPrices() == null) {
                     MessageEmbed messageEmbed = EmbedUtil.makeError("Стоимость не установлена", "Указанный предмет есть в нашей базе данных, " +
                             "однако стоимость на него не была установлена.").build();
@@ -55,11 +55,6 @@ public class GetPriceCommand implements Command {
     }
 
     @Override
-    public String getName() {
-        return "price";
-    }
-
-    @Override
     public String getUsage() {
         return "<предмет>";
     }
@@ -72,11 +67,6 @@ public class GetPriceCommand implements Command {
     @Override
     public String getDescription() {
         return "Получает среднюю стоимость указанного предмета";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[] { "стоимость" };
     }
 
     @Override

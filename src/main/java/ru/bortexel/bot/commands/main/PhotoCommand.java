@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.Channels;
@@ -19,11 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class PhotoCommand implements Command {
-    private final BortexelBot bot;
+public class PhotoCommand extends DefaultBotCommand {
+    protected PhotoCommand(BortexelBot bot) {
+        super("photo", bot);
 
-    public PhotoCommand(BortexelBot bot) {
-        this.bot = bot;
+        this.addAlias("screenshot");
+        this.addAlias("фото");
+        this.addAlias("скриншот");
+        this.addAlias("скрин");
     }
 
     @Override
@@ -36,11 +40,11 @@ public class PhotoCommand implements Command {
         } catch (Exception ignored) { }
 
         if (seasonId == 0) {
-            Photo.getAll(bot.getApiClient()).executeAsync(photos -> handlePhotos(photos, message.getChannel()));
+            Photo.getAll(this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, message.getChannel()));
         } else try {
-            Season season = Season.getByID(seasonId, bot.getApiClient()).execute();
+            Season season = Season.getByID(seasonId, this.getBot().getApiClient()).execute();
             if (season == null) handlePhotos(Collections.emptyList(), message.getChannel());
-            if (season != null) season.getPhotos(bot.getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), message.getChannel()));
+            if (season != null) season.getPhotos(this.getBot().getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), message.getChannel()));
         } catch (NotFoundException ignored) {
             MessageEmbed embed = EmbedUtil.makeError("Не удалось получить скриншоты", null).build();
             message.getTextChannel().sendMessage(embed).queue();
@@ -72,13 +76,8 @@ public class PhotoCommand implements Command {
     }
 
     @Override
-    public String getName() {
-        return "photo";
-    }
-
-    @Override
     public String getUsage() {
-        return null;
+        return "[сезон]";
     }
 
     @Override
@@ -90,11 +89,6 @@ public class PhotoCommand implements Command {
     @Override
     public String getDescription() {
         return "Отображает случайный скриншот с указанного сезона";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[] { "screenshot", "фото", "скриншот", "скрин" };
     }
 
     @Override

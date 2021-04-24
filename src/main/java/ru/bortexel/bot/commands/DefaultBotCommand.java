@@ -10,7 +10,7 @@ public abstract class DefaultBotCommand extends DefaultCommand {
         this.bot = bot;
     }
 
-    public BortexelBot getBot() {
+    public final BortexelBot getBot() {
         return bot;
     }
 }
