@@ -112,7 +112,7 @@ public class PollCommand implements Command {
     @Override
     public AccessLevel getAccessLevel() {
         AccessLevels levels = bot.getAccessLevels();
-        return AccessLevel.make(levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
+        return AccessLevel.make(bot, levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
     }
 
     @Override

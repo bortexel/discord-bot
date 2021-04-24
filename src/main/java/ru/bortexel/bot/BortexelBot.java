@@ -37,15 +37,17 @@ public class BortexelBot {
     private final JDA jda;
     private final Bortexel4J api;
     private final Database database;
+    private final String mainGuildID;
     private AccessLevels accessLevels;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<CommandProvider> commandProviders = new ArrayList<>();
     private final BroadcastingServer broadcastingServer;
 
-    public BortexelBot(JDA jda, Bortexel4J api, Database database, BroadcastingServer broadcastingServer) {
+    public BortexelBot(JDA jda, Bortexel4J api, Database database, String mainGuildID, BroadcastingServer broadcastingServer) {
         this.jda = jda;
         this.api = api;
         this.database = database;
+        this.mainGuildID = mainGuildID;
         this.broadcastingServer = broadcastingServer;
     }
 
@@ -55,8 +57,10 @@ public class BortexelBot {
         String sentryDsn = System.getenv("SENTRY_DSN");
         String apiUrl = System.getenv("API_URL");
         String bcsUrl = System.getenv("BCS_URL");
+        String mainGuildId = System.getenv("MAIN_GUILD_ID");
 
         if (bcsUrl == null) bcsUrl = "wss://bcs.bortexel.ru/v1/websocket";
+        if (mainGuildId == null) mainGuildId = "";
         if (sentryDsn != null) Sentry.init(sentryOptions -> sentryOptions.setDsn(sentryDsn));
 
         Database database;
@@ -83,7 +87,7 @@ public class BortexelBot {
             if (apiUrl != null) client.setApiUrl(apiUrl);
             BroadcastingServer broadcastingServer = client.getBroadcastingServer(bcsUrl);
 
-            new BortexelBot(jda, client, database, broadcastingServer).run();
+            new BortexelBot(jda, client, database, mainGuildId, broadcastingServer).run();
         } catch (Exception e) {
             Sentry.captureException(e);
         }
@@ -149,5 +153,9 @@ public class BortexelBot {
 
     public BroadcastingServer getBroadcastingServer() {
         return broadcastingServer;
+    }
+
+    public String getMainGuildID() {
+        return mainGuildID;
     }
 }
