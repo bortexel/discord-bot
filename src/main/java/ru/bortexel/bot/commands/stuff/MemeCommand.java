@@ -1,16 +1,18 @@
 package ru.bortexel.bot.commands.stuff;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
+import ru.ruscalworld.bortexel4j.core.Callback;
 
 import java.util.List;
 import java.util.Random;
@@ -23,6 +25,15 @@ public class MemeCommand extends DefaultBotCommand {
 
     @Override
     public void onCommand(Message message) {
+        getMeme(response -> message.reply(response).queue());
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        getMeme(response -> hook.sendMessage(response).queue());
+    }
+
+    private void getMeme(Callback<MessageEmbed> callback) {
         TextChannel channel = this.getBot().getJDA().getTextChannelById(Channels.ART_CHANNEL);
         if (channel == null) return;
 
@@ -59,19 +70,24 @@ public class MemeCommand extends DefaultBotCommand {
                     builder.setAuthor(author.getAsTag(), null, author.getAvatarUrl());
                     builder.setDescription(randomMessage.getContentRaw());
 
-                    message.getChannel().sendMessage(builder.build()).queue();
+                    callback.handle(builder.build());
                     return;
                 }
             }
 
             EmbedBuilder error = EmbedUtil.makeError("Мем не нашёлся, попробуйте ещё раз :(", null);
-            message.getChannel().sendMessage(error.build()).queue();
+            callback.handle(error.build());
         });
     }
 
     @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this);
+    }
+
+    @Override
     public String getDescription() {
-        return "Выводит случайное сообщение из канала <#" + Channels.ART_CHANNEL + ">";
+        return "Выводит случайное сообщение из канала #творчество";
     }
 
     @Override
