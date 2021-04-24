@@ -30,7 +30,6 @@ import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,17 +40,17 @@ public class BortexelBot {
     private final JDA jda;
     private final Bortexel4J api;
     private final Database database;
-    private final String mainGuildID;
+    private String mainGuildID;
+    private boolean shouldRegisterCommands;
     private AccessLevels accessLevels;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<CommandProvider> commandProviders = new ArrayList<>();
     private final BroadcastingServer broadcastingServer;
 
-    public BortexelBot(JDA jda, Bortexel4J api, Database database, String mainGuildID, BroadcastingServer broadcastingServer) {
+    public BortexelBot(JDA jda, Bortexel4J api, Database database, BroadcastingServer broadcastingServer) {
         this.jda = jda;
         this.api = api;
         this.database = database;
-        this.mainGuildID = mainGuildID;
         this.broadcastingServer = broadcastingServer;
     }
 
@@ -91,7 +90,10 @@ public class BortexelBot {
             if (apiUrl != null) client.setApiUrl(apiUrl);
             BroadcastingServer broadcastingServer = client.getBroadcastingServer(bcsUrl);
 
-            new BortexelBot(jda, client, database, mainGuildId, broadcastingServer).run();
+            BortexelBot bot = new BortexelBot(jda, client, database, broadcastingServer);
+            bot.setMainGuildID(mainGuildId);
+            bot.setShouldRegisterCommands(System.getenv("DISABLE_SLASH_COMMANDS") == null);
+            bot.run();
         } catch (Exception e) {
             Sentry.captureException(e);
         }
@@ -136,7 +138,7 @@ public class BortexelBot {
 
     private void registerGlobalSlashCommands() {
         List<CommandUpdateAction.CommandData> slashCommands = new ArrayList<>();
-        for (CommandProvider commandProvider : this.getCommandProviders()) {
+        if (this.isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getCommandProviders()) {
             for (Command command : commandProvider.getCommands()) {
                 if (!command.isGlobal() || command.getSlashCommandData() == null) continue;
                 slashCommands.add(command.getSlashCommandData());
@@ -175,7 +177,23 @@ public class BortexelBot {
         return broadcastingServer;
     }
 
+    public Guild getMainGuild() {
+        return this.getJDA().getGuildById(this.getMainGuildID());
+    }
+
     public String getMainGuildID() {
         return mainGuildID;
+    }
+
+    public void setMainGuildID(String mainGuildID) {
+        this.mainGuildID = mainGuildID;
+    }
+
+    public boolean isShouldRegisterCommands() {
+        return shouldRegisterCommands;
+    }
+
+    public void setShouldRegisterCommands(boolean shouldRegisterCommands) {
+        this.shouldRegisterCommands = shouldRegisterCommands;
     }
 }

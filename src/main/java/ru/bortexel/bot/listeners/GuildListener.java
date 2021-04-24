@@ -23,7 +23,7 @@ public class GuildListener extends BotListener {
         if (!guild.getId().equals(this.getBot().getMainGuildID())) return;
         List<CommandUpdateAction.CommandData> slashCommands = new ArrayList<>();
 
-        for (CommandProvider commandProvider : this.getBot().getCommandProviders()) {
+        if (this.getBot().isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getBot().getCommandProviders()) {
             for (Command command : commandProvider.getCommands()) {
                 if (command.getSlashCommandData() == null || command.isGlobal()) continue;
                 slashCommands.add(command.getSlashCommandData());
