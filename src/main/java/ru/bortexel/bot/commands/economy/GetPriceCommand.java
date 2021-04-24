@@ -1,18 +1,20 @@
 package ru.bortexel.bot.commands.economy;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.commands.CommandHook;
+import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.*;
+import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
-
-import java.util.List;
 
 public class GetPriceCommand extends DefaultBotCommand {
     protected GetPriceCommand(BortexelBot bot) {
@@ -22,36 +24,47 @@ public class GetPriceCommand extends DefaultBotCommand {
 
     @Override
     public void onCommand(Message message) {
+        String[] args = TextUtil.getCommandArgs(message);
+        getPrice(args[1], response -> message.getTextChannel().sendMessage(response).queue());
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+        SlashCommandEvent.OptionData itemOption = event.getOption("item");
+        assert itemOption != null;
+        getPrice(itemOption.getAsString(), response -> hook.sendMessage(response).queue());
+    }
+
+    private void getPrice(String itemName, Callback<MessageEmbed> callback) {
+        Item item;
+
         try {
-            String[] args = TextUtil.getCommandArgs(message);
-            MessageChannel channel = message.getChannel();
+            item = Item.getByID(itemName, this.getBot().getApiClient()).execute();
+        } catch (NotFoundException e) {
+            MessageEmbed messageEmbed = EmbedUtil.makeError("Предмет не найден", "Указанный предмет не найден в базе данных. " +
+                    "Проверьте правильность написания названия и повторите попытку.").build();
+            callback.handle(messageEmbed);
+            return;
+        }
 
-            String id = args[1];
-            Item item;
-
-            try {
-                item = Item.getByID(id, this.getBot().getApiClient()).execute();
-            } catch (NotFoundException e) {
-                MessageEmbed messageEmbed = EmbedUtil.makeError("Предмет не найден", "Указанный предмет не найден в базе данных. " +
-                        "Проверьте правильность написания названия и повторите попытку.").build();
-                channel.sendMessage(messageEmbed).queue();
+        item.getPrices(this.getBot().getApiClient()).executeAsync(prices -> {
+            if (prices.getPrices() == null) {
+                MessageEmbed messageEmbed = EmbedUtil.makeError("Стоимость не установлена", "Указанный предмет есть в нашей базе данных, " +
+                        "однако стоимость на него не была установлена.").build();
+                callback.handle(messageEmbed);
                 return;
             }
 
-            item.getPrices(this.getBot().getApiClient()).executeAsync(prices -> {
-                if (prices.getPrices() == null) {
-                    MessageEmbed messageEmbed = EmbedUtil.makeError("Стоимость не установлена", "Указанный предмет есть в нашей базе данных, " +
-                            "однако стоимость на него не была установлена.").build();
-                    channel.sendMessage(messageEmbed).queue();
-                    return;
-                }
+            EmbedBuilder builder = EmbedUtil.makeItemPriceInfo(prices);
+            callback.handle(builder.build());
+        });
+    }
 
-                EmbedBuilder builder = EmbedUtil.makeItemPriceInfo(prices);
-                channel.sendMessage(builder.build()).queue();
-            });
-        } catch (Exception e) {
-            BortexelBot.handleException(e);
-        }
+    @Override
+    public CommandUpdateAction.CommandData getSlashCommandData() {
+        return CommandUtil.makeSlashCommand(this)
+                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.STRING, "item", "Идентификатор предмета")
+                        .setRequired(true));
     }
 
     @Override
