@@ -23,6 +23,8 @@ public class HelpCommand extends DefaultBotCommand {
 
         this.addAlias("помощь");
         this.addAlias("хелп");
+
+        this.setGlobal(true);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class HelpCommand extends DefaultBotCommand {
         else hook.sendMessage(getHelp(member, commandOption.getAsString())).queue();
     }
 
-    private MessageEmbed getHelp(Member member, @Nullable String commandName) {
+    private MessageEmbed getHelp(@Nullable Member member, @Nullable String commandName) {
         EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
 
         if (commandName == null) {
@@ -53,7 +55,8 @@ public class HelpCommand extends DefaultBotCommand {
                 int i = 0;
 
                 for (Command command : provider.getCommands()) {
-                    if (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member)) continue;
+                    if (member == null || command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member)) continue;
+                    if (!command.isGlobal() && !member.getGuild().getId().equals(this.getBot().getMainGuildID())) continue;
                     i++;
                     if (i != 1) commands.append("\n");
                     commands.append("`").append(BortexelBot.COMMAND_PREFIX).append(command.getName()).append("`");
@@ -64,10 +67,17 @@ public class HelpCommand extends DefaultBotCommand {
             }
         } else {
             Command command = this.getBot().getCommand(commandName);
-            if (command == null || (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member))) {
-                return EmbedUtil.makeError("Команда не найдена", "Указанная Вами команда не существует, " +
-                        "либо у Вас недостаточно прав для просмотра информации о её использовании.").build();
-            }
+            MessageEmbed embed = EmbedUtil.makeError("Команда не найдена", "Указанная Вами команда не существует, " +
+                    "либо у Вас недостаточно прав для просмотра информации о её использовании.").build();
+
+            // Error if command doesn't exist
+            if (command == null) return embed;
+            // Error if not global command executed outside guild
+            if (member == null && !command.isGlobal()) return embed;
+            // Error if not global command executed outside main guild
+            if (!command.isGlobal() && member != null && !member.getGuild().getId().equals(this.getBot().getMainGuildID())) return embed;
+            // Error if member doesn't have access to this command
+            if (command.getAccessLevel() != null && !command.getAccessLevel().hasAccess(member)) return embed;
 
             builder = EmbedUtil.makeCommandInfo(command);
         }

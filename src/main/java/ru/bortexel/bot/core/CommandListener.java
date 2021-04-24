@@ -7,16 +7,15 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import ru.bortexel.bot.BortexelBot;
+import ru.bortexel.bot.listeners.BotListener;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 
 import java.util.Arrays;
 
-public class CommandListener extends ListenerAdapter {
-    private final BortexelBot bot;
-
+public class CommandListener extends BotListener {
     public CommandListener(BortexelBot bot) {
-        this.bot = bot;
+        super(bot);
     }
 
     @Override
@@ -28,8 +27,9 @@ public class CommandListener extends ListenerAdapter {
 
             String[] args = text.split(" ");
             String commandLabel = args[0].substring(BortexelBot.COMMAND_PREFIX.length());
-            Command command = bot.getCommand(commandLabel);
+            Command command = this.getBot().getCommand(commandLabel);
             if (command == null) return;
+            if (command.isGlobal() && !event.getGuild().getId().equals(this.getBot().getMainGuildID())) return;
 
             assert event.getMember() != null;
             AccessLevel accessLevel = command.getAccessLevel();
@@ -64,7 +64,10 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
         try {
-            Command command = bot.getCommand(event.getName());
+            // Executing slash commands in DMs makes errors, so reject any DM executions
+            if (event.getGuild() == null) return;
+
+            Command command = this.getBot().getCommand(event.getName());
             if (command == null || command.getSlashCommandData() == null) return;
 
             CommandHook hook = event.getHook();

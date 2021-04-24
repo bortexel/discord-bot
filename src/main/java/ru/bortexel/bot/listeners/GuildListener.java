@@ -24,7 +24,7 @@ public class GuildListener extends BotListener {
 
         for (CommandProvider commandProvider : this.getBot().getCommandProviders()) {
             for (Command command : commandProvider.getCommands()) {
-                if (command.getSlashCommandData() == null) continue;
+                if (command.getSlashCommandData() == null || command.isGlobal()) continue;
                 slashCommands.add(command.getSlashCommandData());
             }
         }

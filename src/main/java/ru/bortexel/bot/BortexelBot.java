@@ -107,6 +107,8 @@ public class BortexelBot {
         this.registerCommandProvider(new StaffCommandProvider(this));
         this.registerCommandProvider(new StuffCommandProvider(this));
 
+        this.registerGlobalSlashCommands();
+
         jda.addEventListener(new CommandListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
         jda.addEventListener(new GuildListener(this));
@@ -130,6 +132,19 @@ public class BortexelBot {
             String[] aliases = command.getAliases();
             if (aliases.length > 0) for (String alias : aliases) this.commands.put(alias, command);
         }
+    }
+
+    private void registerGlobalSlashCommands() {
+        List<CommandUpdateAction.CommandData> slashCommands = new ArrayList<>();
+        for (CommandProvider commandProvider : this.getCommandProviders()) {
+            for (Command command : commandProvider.getCommands()) {
+                if (!command.isGlobal() || command.getSlashCommandData() == null) continue;
+                slashCommands.add(command.getSlashCommandData());
+            }
+        }
+
+        CommandUpdateAction commands = this.getJDA().updateCommands();
+        commands.addCommands(slashCommands).queue();
     }
 
     public Command getCommand(String label) {

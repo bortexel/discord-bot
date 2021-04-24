@@ -10,4 +10,5 @@ public interface Executable {
     void onSlashCommand(SlashCommandEvent event, CommandHook hook);
     CommandUpdateAction.CommandData getSlashCommandData();
     boolean isEphemeral();
+    boolean isGlobal();
 }

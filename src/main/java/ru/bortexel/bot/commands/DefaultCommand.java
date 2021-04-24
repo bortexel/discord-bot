@@ -15,6 +15,7 @@ public abstract class DefaultCommand implements Command {
     private final String name;
     private final List<String> aliases = new ArrayList<>();
     private boolean ephemeral = false;
+    private boolean global = false;
 
     protected DefaultCommand(String name) {
         this.name = name;
@@ -79,6 +80,15 @@ public abstract class DefaultCommand implements Command {
 
     public void setEphemeral(boolean ephemeral) {
         this.ephemeral = ephemeral;
+    }
+
+    @Override
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 
     public abstract void onCommand(Message message);
