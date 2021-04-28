@@ -20,7 +20,7 @@ import java.util.Random;
 public class MemeCommand extends DefaultBotCommand {
     protected MemeCommand(BortexelBot bot) {
         super("art", bot);
-        this.addAlias("meme");
+        this.addAlias("meme", true);
     }
 
     @Override

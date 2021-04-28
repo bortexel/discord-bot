@@ -6,6 +6,7 @@ public interface Command extends Executable {
     String getUsageExample();
     String getDescription();
     String[] getAliases();
+    String[] getSlashAliases();
     String[] getAllowedChannelIds();
     AccessLevel getAccessLevel();
     int getMinArgumentCount();

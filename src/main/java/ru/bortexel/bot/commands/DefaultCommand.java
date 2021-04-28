@@ -14,6 +14,7 @@ import java.util.List;
 public abstract class DefaultCommand implements Command {
     private final String name;
     private final List<String> aliases = new ArrayList<>();
+    private final List<String> slashAliases = new ArrayList<>();
     private boolean ephemeral = false;
     private boolean global = false;
 
@@ -46,8 +47,18 @@ public abstract class DefaultCommand implements Command {
         return this.aliases.toArray(new String[aliases.size()]);
     }
 
-    public final void addAlias(String alias) {
+    @Override
+    public String[] getSlashAliases() {
+        return this.slashAliases.toArray(new String[slashAliases.size()]);
+    }
+
+    public final void addAlias(String alias, boolean slash) {
         this.aliases.add(alias);
+        if (slash) this.slashAliases.add(alias);
+    }
+
+    public final void addAlias(String alias) {
+        this.addAlias(alias, false);
     }
 
     @Override
