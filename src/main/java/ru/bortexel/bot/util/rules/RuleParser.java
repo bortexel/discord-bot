@@ -22,7 +22,23 @@ public class RuleParser {
                 List<String> renderedRules = new ArrayList<>();
                 if (part.getDescription() != null) renderedRules.add(part.getDescription());
                 if (part.getRules() != null) for (RulePart.Rule rule : part.getRules()) renderedRules.add(rule.render(0));
-                builder.setDescription(String.join("\n", renderedRules));
+
+                StringBuilder description = new StringBuilder();
+                for (String renderedRule : renderedRules) {
+                    if (description.length() + renderedRule.length() > 2000) {
+                        builder.setDescription(description);
+                        channel.sendMessage(builder.build()).complete();
+
+                        builder = new EmbedBuilder();
+                        builder.setColor(color);
+
+                        description = new StringBuilder();
+                    }
+
+                    description.append(renderedRule).append("\n");
+                }
+
+                builder.setDescription(description);
 
                 if (rules.getParts().get(rules.getParts().size() - 1).getName().equals(part.getName())) {
                     builder.setTimestamp(rules.getLastUpdateTime().toInstant());
