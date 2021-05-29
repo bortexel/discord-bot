@@ -10,4 +10,5 @@ public interface Command extends Executable {
     String[] getAllowedChannelIds();
     AccessLevel getAccessLevel();
     int getMinArgumentCount();
+    boolean isLegacySupported();
 }

@@ -17,6 +17,7 @@ public abstract class DefaultCommand implements Command {
     private final List<String> slashAliases = new ArrayList<>();
     private boolean ephemeral = false;
     private boolean global = false;
+    private boolean legacy = true;
 
     protected DefaultCommand(String name) {
         this.name = name;
@@ -102,5 +103,15 @@ public abstract class DefaultCommand implements Command {
         this.global = global;
     }
 
-    public abstract void onCommand(Message message);
+    @Override
+    public void onCommand(Message message) { }
+
+    public void setLegacySupported(boolean legacy) {
+        this.legacy = legacy;
+    }
+
+    @Override
+    public boolean isLegacySupported() {
+        return this.legacy;
+    }
 }

@@ -29,6 +29,7 @@ public class CommandListener extends BotListener {
             Command command = this.getBot().getCommand(commandLabel);
             if (command == null) return;
             if (command.isGlobal() && !event.getGuild().getId().equals(this.getBot().getMainGuildID())) return;
+            if (!command.isLegacySupported()) return;
 
             assert event.getMember() != null;
             AccessLevel accessLevel = command.getAccessLevel();
