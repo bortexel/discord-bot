@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.github.dv8fromtheworld</groupId>
             <artifactId>jda</artifactId>
-            <version>4e02960</version>
+            <version>757de9b</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

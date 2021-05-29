@@ -1,10 +1,12 @@
 package ru.bortexel.bot.commands.roles;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
@@ -12,7 +14,6 @@ import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,11 +29,11 @@ public abstract class RoleCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        SlashCommandEvent.OptionData userOption = event.getOption("user");
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        OptionMapping userOption = event.getOption("user");
         assert userOption != null;
         MessageEmbed response = manageRoles(event.getGuild(), Collections.singletonList(userOption.getAsMember()));
-        hook.sendMessage(response).queue();
+        hook.sendMessageEmbeds(response).queue();
     }
 
     private MessageEmbed manageRoles(Guild guild, List<Member> members) {
@@ -76,10 +77,9 @@ public abstract class RoleCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.USER, "user", "Участник")
-                        .setRequired(true));
+                .addOption(OptionType.USER, "user", "Участник", true);
     }
 
     @Override

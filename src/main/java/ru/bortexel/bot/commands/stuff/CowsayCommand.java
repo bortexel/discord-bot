@@ -2,12 +2,13 @@ package ru.bortexel.bot.commands.stuff;
 
 import com.github.ricksbrown.cowsay.Cowsay;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
-import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
@@ -31,11 +32,11 @@ public class CowsayCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        SlashCommandEvent.OptionData textOption = event.getOption("text");
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        OptionMapping textOption = event.getOption("text");
         if (textOption == null) return;
         String[] args = textOption.getAsString().split(" ");
-        hook.sendMessage(cowsay(args)).queue();
+        hook.sendMessageEmbeds(cowsay(args)).queue();
     }
 
     private MessageEmbed cowsay(String[] args) {
@@ -71,10 +72,9 @@ public class CowsayCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.STRING, "text", "Текст, который необходимо вывести")
-                        .setRequired(true));
+                .addOption(OptionType.STRING, "text", "Текст, который необходимо вывести", true);
     }
 
     @Override

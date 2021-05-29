@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -137,7 +138,7 @@ public class BortexelBot {
     }
 
     private void registerGlobalSlashCommands() {
-        List<CommandUpdateAction.CommandData> slashCommands = new ArrayList<>();
+        List<CommandData> slashCommands = new ArrayList<>();
         if (this.isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getCommandProviders()) {
             for (Command command : commandProvider.getCommands()) {
                 if (!command.isGlobal() || command.getSlashCommandData() == null) continue;

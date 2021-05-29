@@ -1,17 +1,20 @@
 package ru.bortexel.bot.commands.economy;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
-import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.util.*;
+import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.CommandUtil;
+import ru.bortexel.bot.util.EmbedUtil;
+import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
@@ -29,10 +32,10 @@ public class GetPriceCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        SlashCommandEvent.OptionData itemOption = event.getOption("item");
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        OptionMapping itemOption = event.getOption("item");
         assert itemOption != null;
-        getPrice(itemOption.getAsString(), response -> hook.sendMessage(response).queue());
+        getPrice(itemOption.getAsString(), response -> hook.sendMessageEmbeds(response).queue());
     }
 
     private void getPrice(String itemName, Callback<MessageEmbed> callback) {
@@ -61,10 +64,9 @@ public class GetPriceCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.STRING, "item", "Идентификатор предмета")
-                        .setRequired(true));
+                .addOption(OptionType.STRING, "item", "Идентификатор предмета", true);
     }
 
     @Override

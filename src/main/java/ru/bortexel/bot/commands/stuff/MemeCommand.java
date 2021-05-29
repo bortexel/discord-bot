@@ -1,14 +1,13 @@
 package ru.bortexel.bot.commands.stuff;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
-import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
@@ -29,8 +28,8 @@ public class MemeCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        getMeme(response -> hook.sendMessage(response).queue());
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        getMeme(response -> hook.sendMessageEmbeds(response).queue());
     }
 
     private void getMeme(Callback<MessageEmbed> callback) {
@@ -81,7 +80,7 @@ public class MemeCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this);
     }
 

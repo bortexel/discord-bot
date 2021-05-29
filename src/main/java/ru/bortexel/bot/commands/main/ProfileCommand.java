@@ -1,11 +1,13 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
-import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
@@ -32,10 +34,10 @@ public class ProfileCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        SlashCommandEvent.OptionData usernameOption = event.getOption("username");
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        OptionMapping usernameOption = event.getOption("username");
         assert usernameOption != null;
-        getProfile(usernameOption.getAsString(), response -> hook.sendMessage(response).queue());
+        getProfile(usernameOption.getAsString(), response -> hook.sendMessageEmbeds(response).queue());
     }
 
     private void getProfile(String username, Callback<MessageEmbed> callback) {
@@ -62,10 +64,9 @@ public class ProfileCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.STRING, "username", "Никнейм игрока на сервере")
-                        .setRequired(true));
+                .addOption(OptionType.STRING, "username", "Никнейм игрока на сервере", true);
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.bortexel.bot.listeners;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class GuildListener extends BotListener {
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         Guild guild = event.getGuild();
         if (!guild.getId().equals(this.getBot().getMainGuildID())) return;
-        List<CommandUpdateAction.CommandData> slashCommands = new ArrayList<>();
+        List<CommandData> slashCommands = new ArrayList<>();
 
         if (this.getBot().isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getBot().getCommandProviders()) {
             for (Command command : commandProvider.getCommands()) {

@@ -1,10 +1,9 @@
 package ru.bortexel.bot.core;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.listeners.BotListener;
@@ -89,8 +88,8 @@ public class CommandListener extends BotListener {
                 }
             }
 
-            CommandHook hook = event.getHook();
-            event.acknowledge(command.isEphemeral()).queue();
+            InteractionHook hook = event.getHook();
+            event.deferReply(command.isEphemeral()).queue();
             hook.setEphemeral(command.isEphemeral());
 
             command.onSlashCommand(event, hook);
@@ -100,9 +99,9 @@ public class CommandListener extends BotListener {
     }
 
     public void sendError(SlashCommandEvent event, String message) {
-        CommandHook hook = event.getHook();
+        InteractionHook hook = event.getHook();
         hook.setEphemeral(true);
-        event.acknowledge(true).queue();
+        event.deferReply(true).queue();
         hook.sendMessage(message).queue();
     }
 }

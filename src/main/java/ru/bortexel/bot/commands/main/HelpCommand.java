@@ -1,11 +1,15 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
-import net.dv8tion.jda.api.entities.Command.OptionType;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
@@ -37,11 +41,11 @@ public class HelpCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
         Member member = event.getMember();
-        SlashCommandEvent.OptionData commandOption = event.getOption("command");
-        if (commandOption == null) hook.sendMessage(getHelp(member, null)).queue();
-        else hook.sendMessage(getHelp(member, commandOption.getAsString())).queue();
+        OptionMapping commandOption = event.getOption("command");
+        if (commandOption == null) hook.sendMessageEmbeds(getHelp(member, null)).queue();
+        else hook.sendMessageEmbeds(getHelp(member, commandOption.getAsString())).queue();
     }
 
     private MessageEmbed getHelp(@Nullable Member member, @Nullable String commandName) {
@@ -86,9 +90,9 @@ public class HelpCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(OptionType.STRING, "command", "Команда"));
+                .addOption(OptionType.STRING, "command", "Команда");
     }
 
     @Override

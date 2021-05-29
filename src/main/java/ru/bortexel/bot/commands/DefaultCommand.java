@@ -1,9 +1,9 @@
 package ru.bortexel.bot.commands;
 
-import net.dv8tion.jda.api.commands.CommandHook;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.Channels;
@@ -77,12 +77,12 @@ public abstract class DefaultCommand implements Command {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return null;
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) { }
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) { }
 
     @Override
     public final boolean isEphemeral() {

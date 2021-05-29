@@ -1,13 +1,13 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.commands.CommandHook;
-import net.dv8tion.jda.api.entities.Command;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
@@ -15,7 +15,6 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.photo.Photo;
@@ -48,11 +47,11 @@ public class PhotoCommand extends DefaultBotCommand {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, CommandHook hook) {
-        SlashCommandEvent.OptionData seasonOption = event.getOption("season");
+    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
+        OptionMapping seasonOption = event.getOption("season");
         int seasonID = 0;
         if (seasonOption != null) seasonID = (int) seasonOption.getAsLong();
-        getPhotos(seasonID, response -> hook.sendMessage(response).queue());
+        getPhotos(seasonID, response -> hook.sendMessageEmbeds(response).queue());
     }
 
     private void getPhotos(int seasonID, Callback<MessageEmbed> callback) {
@@ -93,9 +92,9 @@ public class PhotoCommand extends DefaultBotCommand {
     }
 
     @Override
-    public CommandUpdateAction.CommandData getSlashCommandData() {
+    public CommandData getSlashCommandData() {
         return CommandUtil.makeSlashCommand(this)
-                .addOption(new CommandUpdateAction.OptionData(Command.OptionType.INTEGER, "season", "Номер сезона"));
+                .addOption(OptionType.INTEGER, "season", "Номер сезона");
     }
 
     @Override
