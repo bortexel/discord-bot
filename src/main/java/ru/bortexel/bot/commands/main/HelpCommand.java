@@ -15,7 +15,7 @@ import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.CommandGroup;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
@@ -54,7 +54,7 @@ public class HelpCommand extends DefaultBotCommand {
         if (commandName == null) {
             builder.setTitle("Команды");
 
-            for (CommandProvider provider : this.getBot().getCommandProviders()) {
+            for (CommandGroup provider : this.getBot().getCommandProviders()) {
                 StringBuilder commands = new StringBuilder();
                 int i = 0;
 

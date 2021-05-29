@@ -10,15 +10,15 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import ru.bortexel.bot.commands.economy.EconomyCommandProvider;
-import ru.bortexel.bot.commands.main.MainCommandProvider;
-import ru.bortexel.bot.commands.roles.RoleCommandProvider;
-import ru.bortexel.bot.commands.info.InfoCommandProvider;
-import ru.bortexel.bot.commands.staff.StaffCommandProvider;
-import ru.bortexel.bot.commands.stuff.StuffCommandProvider;
+import ru.bortexel.bot.commands.economy.EconomyCommandGroup;
+import ru.bortexel.bot.commands.main.MainCommandGroup;
+import ru.bortexel.bot.commands.roles.RoleCommandGroup;
+import ru.bortexel.bot.commands.info.InfoCommandGroup;
+import ru.bortexel.bot.commands.staff.StaffCommandGroup;
+import ru.bortexel.bot.commands.stuff.StuffCommandGroup;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandListener;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.CommandGroup;
 import ru.bortexel.bot.core.Database;
 import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
@@ -45,7 +45,7 @@ public class BortexelBot {
     private boolean shouldRegisterCommands;
     private AccessLevels accessLevels;
     private final HashMap<String, Command> commands = new HashMap<>();
-    private final List<CommandProvider> commandProviders = new ArrayList<>();
+    private final List<CommandGroup> commandGroups = new ArrayList<>();
     private final BroadcastingServer broadcastingServer;
 
     public BortexelBot(JDA jda, Bortexel4J api, Database database, BroadcastingServer broadcastingServer) {
@@ -103,12 +103,12 @@ public class BortexelBot {
     public void run() {
         this.accessLevels = new AccessLevels(this);
 
-        this.registerCommandProvider(new MainCommandProvider(this));
-        this.registerCommandProvider(new EconomyCommandProvider(this));
-        this.registerCommandProvider(new InfoCommandProvider(this));
-        this.registerCommandProvider(new RoleCommandProvider(this));
-        this.registerCommandProvider(new StaffCommandProvider(this));
-        this.registerCommandProvider(new StuffCommandProvider(this));
+        this.registerCommandProvider(new MainCommandGroup(this));
+        this.registerCommandProvider(new EconomyCommandGroup(this));
+        this.registerCommandProvider(new InfoCommandGroup(this));
+        this.registerCommandProvider(new RoleCommandGroup(this));
+        this.registerCommandProvider(new StaffCommandGroup(this));
+        this.registerCommandProvider(new StuffCommandGroup(this));
 
         this.registerGlobalSlashCommands();
 
@@ -125,8 +125,8 @@ public class BortexelBot {
         Sentry.captureException(throwable);
     }
 
-    private void registerCommandProvider(CommandProvider provider) {
-        this.commandProviders.add(provider);
+    private void registerCommandProvider(CommandGroup provider) {
+        this.commandGroups.add(provider);
         for (Command command : provider.getCommands()) {
             // Register command using its name
             this.commands.put(command.getName(), command);
@@ -139,8 +139,8 @@ public class BortexelBot {
 
     private void registerGlobalSlashCommands() {
         List<CommandData> slashCommands = new ArrayList<>();
-        if (this.isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getCommandProviders()) {
-            for (Command command : commandProvider.getCommands()) {
+        if (this.isShouldRegisterCommands()) for (CommandGroup commandGroup : this.getCommandProviders()) {
+            for (Command command : commandGroup.getCommands()) {
                 if (!command.isGlobal() || command.getSlashCommandData() == null) continue;
                 slashCommands.add(command.getSlashCommandData());
             }
@@ -154,8 +154,8 @@ public class BortexelBot {
         return this.commands.get(label);
     }
 
-    public List<CommandProvider> getCommandProviders() {
-        return this.commandProviders;
+    public List<CommandGroup> getCommandProviders() {
+        return this.commandGroups;
     }
 
     public JDA getJDA() {

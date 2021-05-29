@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandProvider;
+import ru.bortexel.bot.core.CommandGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ public class GuildListener extends BotListener {
         if (!guild.getId().equals(this.getBot().getMainGuildID())) return;
         List<CommandData> slashCommands = new ArrayList<>();
 
-        if (this.getBot().isShouldRegisterCommands()) for (CommandProvider commandProvider : this.getBot().getCommandProviders()) {
-            for (Command command : commandProvider.getCommands()) {
+        if (this.getBot().isShouldRegisterCommands()) for (CommandGroup commandGroup : this.getBot().getCommandProviders()) {
+            for (Command command : commandGroup.getCommands()) {
                 if (command.getSlashCommandData() == null || command.isGlobal()) continue;
                 slashCommands.add(command.getSlashCommandData());
 

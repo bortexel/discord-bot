@@ -1,10 +1,10 @@
 package ru.bortexel.bot.commands.economy;
 
 import ru.bortexel.bot.BortexelBot;
-import ru.bortexel.bot.core.DefaultCommandProvider;
+import ru.bortexel.bot.core.DefaultCommandGroup;
 
-public class EconomyCommandProvider extends DefaultCommandProvider {
-    public EconomyCommandProvider(BortexelBot bot) {
+public class EconomyCommandGroup extends DefaultCommandGroup {
+    public EconomyCommandGroup(BortexelBot bot) {
         super(bot, "Экономика");
         this.registerCommand(new GetPriceCommand(this.getBot()));
     }

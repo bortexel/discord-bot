@@ -1,10 +1,10 @@
 package ru.bortexel.bot.commands.main;
 
 import ru.bortexel.bot.BortexelBot;
-import ru.bortexel.bot.core.DefaultCommandProvider;
+import ru.bortexel.bot.core.DefaultCommandGroup;
 
-public class MainCommandProvider extends DefaultCommandProvider {
-    public MainCommandProvider(BortexelBot bot) {
+public class MainCommandGroup extends DefaultCommandGroup {
+    public MainCommandGroup(BortexelBot bot) {
         super(bot, "Основные");
         this.registerCommand(new HelpCommand(this.getBot()));
         this.registerCommand(new ProfileCommand(this.getBot()));

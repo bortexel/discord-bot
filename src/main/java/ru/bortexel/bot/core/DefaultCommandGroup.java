@@ -5,12 +5,12 @@ import ru.bortexel.bot.BortexelBot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultCommandProvider implements CommandProvider {
+public class DefaultCommandGroup implements CommandGroup {
     private final BortexelBot bot;
     private final String name;
     private final List<Command> commands = new ArrayList<>();
 
-    public DefaultCommandProvider(BortexelBot bot, String name) {
+    public DefaultCommandGroup(BortexelBot bot, String name) {
         this.bot = bot;
         this.name = name;
     }
