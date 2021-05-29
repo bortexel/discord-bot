@@ -25,7 +25,7 @@ import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.BanListener;
 import ru.bortexel.bot.listeners.bortexel.WarningListener;
 import ru.bortexel.bot.util.AccessLevels;
-import ru.bortexel.bot.util.poll.PollReactionListener;
+import ru.bortexel.bot.listeners.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
