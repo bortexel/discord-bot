@@ -52,7 +52,7 @@ public class EmbedUtil {
 
     public static EmbedBuilder makeCommandInfo(Command command) {
         EmbedBuilder builder = makeDefaultEmbed();
-        builder.setTitle("Команда **`" + BortexelBot.COMMAND_PREFIX + command.getName() + "`**");
+        builder.setTitle("Команда **`" + CommandUtil.getPreferredPrefix(command) + command.getName() + "`**");
         if (command.getDescription() != null) builder.setDescription(command.getDescription());
         if (command.getUsage() != null)
             builder.addField("Использование", "`" + TextUtil.getFullCommandUsage(command) + "`", false);

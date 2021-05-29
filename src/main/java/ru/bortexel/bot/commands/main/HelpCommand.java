@@ -63,7 +63,7 @@ public class HelpCommand extends DefaultBotCommand {
                     if (!command.isGlobal() && !member.getGuild().getId().equals(this.getBot().getMainGuildID())) continue;
                     i++;
                     if (i != 1) commands.append("\n");
-                    commands.append("`").append(BortexelBot.COMMAND_PREFIX).append(command.getName()).append("`");
+                    commands.append("`").append(CommandUtil.getPreferredPrefix(command)).append(command.getName()).append("`");
                     if (command.getDescription() != null) commands.append(" - ").append(command.getDescription());
                 }
 

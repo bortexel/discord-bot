@@ -12,7 +12,7 @@ public class TextUtil {
     }
 
     public static String getFullCommandUsage(Command command) {
-        return BortexelBot.COMMAND_PREFIX + command.getName() + (command.getUsage() == null ? "" : " " + command.getUsage());
+        return CommandUtil.getPreferredPrefix(command) + command.getName() + (command.getUsage() == null ? "" : " " + command.getUsage());
     }
 
     public static String[] getCommandArgs(Message message) {
