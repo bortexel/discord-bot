@@ -44,10 +44,6 @@ public class ProfileCommand extends DefaultBotCommand {
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
             builder.setAuthor(profile.getUsername(), null, BortexelSkins.getAvatarURL(profile.getUsername(), true));
             builder.setThumbnail(BortexelSkins.getBodyRenderURL(profile.getUsername(), true));
-            builder.addField("Последний вход", profile.getLastLogin() != null
-                    ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
-                    : "Никогда", true);
-            builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
 
             Profile.Bans bans = profile.getBans();
             if (bans.getCount() > 0)
@@ -64,6 +60,11 @@ public class ProfileCommand extends DefaultBotCommand {
                         "**Суммарная мощность:** " + warnings.getTotalPower() + "\n" +
                         "**Текущая мощность:** " + warnings.getCurrentPower() + "\n" +
                         "**Причины:** " + String.join(", ", warnings.getReasons()), true);
+
+            builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
+            builder.addField("Последний вход", profile.getLastLogin() != null
+                    ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
+                    : "Никогда", true);
 
             callback.handle(builder.build());
         }, error -> {
