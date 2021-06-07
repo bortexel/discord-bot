@@ -46,13 +46,16 @@ public class ProfileCommand extends DefaultBotCommand {
             builder.setThumbnail(BortexelSkins.getBodyRenderURL(profile.getUsername(), true));
 
             Profile.Bans bans = profile.getBans();
-            if (bans.getCount() > 0)
-                builder.addField("Блокировки", "**Всего банов:** " + bans.getCount() + "\n" +
+            if (bans.getCount() > 0) {
+                String text = "**Всего банов:** " + bans.getCount() + "\n" +
                         "**Активных банов:** " + bans.getActiveCount() + "\n" +
                         "**Перманентных банов:** " + bans.getPermanentCount() + "\n" +
-                        "**Снятых банов:** " + bans.getSuspendedCount() + "\n" +
-                        "**Суммарный срок:** " + (bans.getTotalDuration() / 3600 / 24) + " дней \n" +
-                        "**Причины:** " + String.join(", ", bans.getReasons()), true);
+                        "**Снятых банов:** " + bans.getSuspendedCount() + "\n";
+                if (bans.getTotalDuration() > 0)
+                    text = text + "**Суммарный срок:** " + (bans.getTotalDuration() / 3600 / 24) + " дней \n";
+                text = text + "**Причины:** " + String.join(", ", bans.getReasons());
+                builder.addField("Блокировки", text, true);
+            }
 
             Profile.Warnings warnings = profile.getWarnings();
             if (warnings.getCount() > 0)
