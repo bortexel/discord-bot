@@ -51,7 +51,7 @@ public class ProfileCommand extends DefaultBotCommand {
                         "**Активных банов:** " + bans.getActiveCount() + "\n" +
                         "**Перманентных банов:** " + bans.getPermanentCount() + "\n" +
                         "**Снятых банов:** " + bans.getSuspendedCount() + "\n";
-                if (bans.getTotalDuration() > 0)
+                if (bans.getTotalDuration() > 0 && bans.getPermanentCount() == 0)
                     text = text + "**Суммарный срок:** " + (bans.getTotalDuration() / 3600 / 24) + " дней \n";
                 text = text + "**Причины:** " + String.join(", ", bans.getReasons());
                 builder.addField("Блокировки", text, true);
