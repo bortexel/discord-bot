@@ -23,7 +23,6 @@ public class ProfileCommand extends DefaultBotCommand {
 
         this.addAlias("user");
         this.addAlias("игрок");
-        this.addAlias("profile");
         this.addAlias("профиль");
     }
 
@@ -49,6 +48,23 @@ public class ProfileCommand extends DefaultBotCommand {
                     ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
                     : "Никогда", true);
             builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
+
+            Profile.Bans bans = profile.getBans();
+            if (bans.getCount() > 0)
+                builder.addField("Блокировки", "**Всего банов:** " + bans.getCount() + "\n" +
+                        "**Активных банов:** " + bans.getActiveCount() + "\n" +
+                        "**Перманентных банов:** " + bans.getPermanentCount() + "\n" +
+                        "**Снятых банов:** " + bans.getSuspendedCount() + "\n" +
+                        "**Суммарный срок:** " + (bans.getTotalDuration() / 3600 / 24) + " дней \n" +
+                        "**Причины:** " + String.join(", ", bans.getReasons()), true);
+
+            Profile.Warnings warnings = profile.getWarnings();
+            if (warnings.getCount() > 0)
+                builder.addField("Предупреждений", "**Всего предупреждений:** " + warnings.getCount() + "\n" +
+                        "**Суммарная мощность:** " + warnings.getTotalPower() + "\n" +
+                        "**Текущая мощность:** " + warnings.getCurrentPower() + "\n" +
+                        "**Причины:** " + String.join(", ", warnings.getReasons()), true);
+
             callback.handle(builder.build());
         }, error -> {
             EmbedBuilder builder;
