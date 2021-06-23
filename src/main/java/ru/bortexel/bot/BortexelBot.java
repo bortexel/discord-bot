@@ -90,6 +90,7 @@ public class BortexelBot {
             Bortexel4J client = Bortexel4J.login(apiToken);
             if (apiUrl != null) client.setApiUrl(apiUrl);
             BroadcastingServer broadcastingServer = client.getBroadcastingServer(bcsUrl);
+            broadcastingServer.setName("BortexelBot");
 
             BortexelBot bot = new BortexelBot(jda, client, database, broadcastingServer);
             bot.setMainGuildID(mainGuildId);
