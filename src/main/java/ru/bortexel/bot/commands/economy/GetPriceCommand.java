@@ -15,9 +15,10 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
+
+import java.util.function.Consumer;
 
 public class GetPriceCommand extends DefaultBotCommand {
     protected GetPriceCommand(BortexelBot bot) {
@@ -38,7 +39,7 @@ public class GetPriceCommand extends DefaultBotCommand {
         getPrice(itemOption.getAsString(), response -> hook.sendMessageEmbeds(response).queue());
     }
 
-    private void getPrice(String itemName, Callback<MessageEmbed> callback) {
+    private void getPrice(String itemName, Consumer<MessageEmbed> callback) {
         Item item;
 
         try {
@@ -46,7 +47,7 @@ public class GetPriceCommand extends DefaultBotCommand {
         } catch (NotFoundException e) {
             MessageEmbed messageEmbed = EmbedUtil.makeError("Предмет не найден", "Указанный предмет не найден в базе данных. " +
                     "Проверьте правильность написания названия и повторите попытку.").build();
-            callback.handle(messageEmbed);
+            callback.accept(messageEmbed);
             return;
         }
 
@@ -54,12 +55,12 @@ public class GetPriceCommand extends DefaultBotCommand {
             if (prices.getPrices() == null) {
                 MessageEmbed messageEmbed = EmbedUtil.makeError("Стоимость не установлена", "Указанный предмет есть в нашей базе данных, " +
                         "однако стоимость на него не была установлена.").build();
-                callback.handle(messageEmbed);
+                callback.accept(messageEmbed);
                 return;
             }
 
             EmbedBuilder builder = EmbedUtil.makeItemPriceInfo(prices);
-            callback.handle(builder.build());
+            callback.accept(builder.build());
         });
     }
 

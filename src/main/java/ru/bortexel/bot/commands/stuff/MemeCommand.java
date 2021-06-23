@@ -11,10 +11,10 @@ import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
-import ru.ruscalworld.bortexel4j.core.Callback;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class MemeCommand extends DefaultBotCommand {
     protected MemeCommand(BortexelBot bot) {
@@ -32,7 +32,7 @@ public class MemeCommand extends DefaultBotCommand {
         getMeme(response -> hook.sendMessageEmbeds(response).queue());
     }
 
-    private void getMeme(Callback<MessageEmbed> callback) {
+    private void getMeme(Consumer<MessageEmbed> callback) {
         TextChannel channel = this.getBot().getJDA().getTextChannelById(Channels.ART_CHANNEL);
         if (channel == null) return;
 
@@ -69,13 +69,13 @@ public class MemeCommand extends DefaultBotCommand {
                     builder.setAuthor(author.getAsTag(), null, author.getAvatarUrl());
                     builder.setDescription(randomMessage.getContentRaw());
 
-                    callback.handle(builder.build());
+                    callback.accept(builder.build());
                     return;
                 }
             }
 
             EmbedBuilder error = EmbedUtil.makeError("Мем не нашёлся, попробуйте ещё раз :(", null);
-            callback.handle(error.build());
+            callback.accept(error.build());
         });
     }
 

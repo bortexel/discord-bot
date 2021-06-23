@@ -15,7 +15,6 @@ import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.CommandUtil;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.photo.Photo;
 import ru.ruscalworld.bortexel4j.models.season.Season;
@@ -23,6 +22,7 @@ import ru.ruscalworld.bortexel4j.models.season.Season;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class PhotoCommand extends DefaultBotCommand {
     protected PhotoCommand(BortexelBot bot) {
@@ -54,7 +54,7 @@ public class PhotoCommand extends DefaultBotCommand {
         getPhotos(seasonID, response -> hook.sendMessageEmbeds(response).queue());
     }
 
-    private void getPhotos(int seasonID, Callback<MessageEmbed> callback) {
+    private void getPhotos(int seasonID, Consumer<MessageEmbed> callback) {
         if (seasonID == 0) {
             Photo.getAll(this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, callback));
         } else try {
@@ -63,15 +63,15 @@ public class PhotoCommand extends DefaultBotCommand {
             if (season != null) season.getPhotos(this.getBot().getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), callback));
         } catch (NotFoundException ignored) {
             MessageEmbed embed = EmbedUtil.makeError("Не удалось получить скриншоты", null).build();
-            callback.handle(embed);
+            callback.accept(embed);
         }
     }
 
-    private void handlePhotos(List<Photo> photos, Callback<MessageEmbed> callback) {
+    private void handlePhotos(List<Photo> photos, Consumer<MessageEmbed> callback) {
         try {
             if (photos == null || photos.size() == 0) {
                 EmbedBuilder builder = EmbedUtil.makeError("Неизвестная ошибка", "Не удалось получить скриншоты с сайта");
-                callback.handle(builder.build());
+                callback.accept(builder.build());
                 return;
             }
 
@@ -85,7 +85,7 @@ public class PhotoCommand extends DefaultBotCommand {
             if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
             if (photo.getAuthorName() != null) builder.addField("Автор", photo.getAuthorName(), true);
 
-            callback.handle(builder.build());
+            callback.accept(builder.build());
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }

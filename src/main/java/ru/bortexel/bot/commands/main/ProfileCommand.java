@@ -8,14 +8,14 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.util.*;
-import ru.ruscalworld.bortexel4j.core.Callback;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.profile.Profile;
 import ru.ruscalworld.bortexel4j.util.BortexelSkins;
+
+import java.util.function.Consumer;
 
 public class ProfileCommand extends DefaultBotCommand {
     protected ProfileCommand(BortexelBot bot) {
@@ -39,7 +39,7 @@ public class ProfileCommand extends DefaultBotCommand {
         getProfile(usernameOption.getAsString(), response -> hook.sendMessageEmbeds(response).queue());
     }
 
-    private void getProfile(String username, Callback<MessageEmbed> callback) {
+    private void getProfile(String username, Consumer<MessageEmbed> callback) {
         Profile.getByUserName(username).executeAsync(profile -> {
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
             builder.setAuthor(profile.getUsername(), null, BortexelSkins.getAvatarURL(profile.getUsername(), true));
@@ -69,7 +69,7 @@ public class ProfileCommand extends DefaultBotCommand {
                     ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
                     : "Никогда", true);
 
-            callback.handle(builder.build());
+            callback.accept(builder.build());
         }, error -> {
             EmbedBuilder builder;
             if (error instanceof NotFoundException) {
@@ -79,7 +79,7 @@ public class ProfileCommand extends DefaultBotCommand {
                 builder = EmbedUtil.makeError("Не удалось получить профиль", "При получении профиля произошла непредвиденная ошибка.");
                 BortexelBot.handleException(error);
             }
-            callback.handle(builder.build());
+            callback.accept(builder.build());
         });
     }
 
