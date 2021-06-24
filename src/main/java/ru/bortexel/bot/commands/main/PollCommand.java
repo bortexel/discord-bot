@@ -95,7 +95,7 @@ public class PollCommand extends DefaultBotCommand {
 
     @Override
     public String[] getAllowedChannelIds() {
-        return new String[] { Channels.BOTS_CHANNEL, Channels.PARLIAMENT_CHAT, Channels.ADMIN_CHAT, Channels.POLL_CHAT };
+        return new String[] { };
     }
 
     @Override
