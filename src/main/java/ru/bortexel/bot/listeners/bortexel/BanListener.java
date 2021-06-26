@@ -3,6 +3,8 @@ package ru.bortexel.bot.listeners.bortexel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.TextUtil;
@@ -23,36 +25,44 @@ public class BanListener extends BotListener {
 
     @Override
     public void onBanCreated(GenericBanEvent event) {
-        Ban ban = event.getPayload();
-        System.out.println("Received info about ban #" + ban.getID());
+        try {
+            Ban ban = event.getPayload();
+            getLogger().info("Received info about ban #" + ban.getID());
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setColor(Color.decode("#AA0000"));
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(Color.decode("#AA0000"));
 
-        String time = "навсегда";
-        if (!ban.isPermanent() && ban.getExpiresAt() != null) {
-            long delay = ban.getExpiresAt().getTime() - ban.getCreatedAt().getTime();
-            time = "на **" + TimeUtil.formatLength(delay / 1000 + 1) + "**";
+            String time = "навсегда";
+            if (!ban.isPermanent() && ban.getExpiresAt() != null) {
+                long delay = ban.getExpiresAt().getTime() - ban.getCreatedAt().getTime();
+                time = "на **" + TimeUtil.formatLength(delay / 1000 + 1) + "**";
+            }
+
+            builder.setTitle("**" + ban.getUsername().replace("_", "\\_") + "** был забанен " + time);
+            builder.setFooter("Параметры могут быть изменены со временем. В таком случае администратор обязан оставить сообщение ниже.");
+
+            builder.addField("Идентификатор", "" + ban.getID(), true);
+            builder.addField("Причина", ban.getReason(), true);
+
+            if (!ban.isPermanent() && ban.getExpiresAt() != null) {
+                String expires = TimeUtil.getDefaultDateFormat().format(ban.getExpiresAt());
+                expires = expires.substring(0, 1).toUpperCase(Locale.ROOT) + expires.substring(1);
+                builder.addField("Истекает", expires, true);
+            }
+
+            JDA jda = this.getBot().getJDA();
+            Account.getByID(ban.getAdminID(), this.getBot().getApiClient())
+                    .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
+                        builder.setAuthor(ban.getAdminName(), null, user.getAvatarUrl());
+                        TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
+                        if (channel != null) channel.sendMessage(builder.build()).queue();
+                    }));
+        } catch (Exception e) {
+            BortexelBot.handleException(e);
         }
+    }
 
-        builder.setTitle("**" + ban.getUsername().replace("_", "\\_") + "** был забанен " + time);
-        builder.setFooter("Параметры могут быть изменены со временем. В таком случае администратор обязан оставить сообщение ниже.");
-
-        builder.addField("Идентификатор", "" + ban.getID(), true);
-        builder.addField("Причина", ban.getReason(), true);
-
-        if (!ban.isPermanent() && ban.getExpiresAt() != null) {
-            String expires = TimeUtil.getDefaultDateFormat().format(ban.getExpiresAt());
-            expires = expires.substring(0, 1).toUpperCase(Locale.ROOT) + expires.substring(1);
-            builder.addField("Истекает", expires, true);
-        }
-
-        JDA jda = this.getBot().getJDA();
-        Account.getByID(ban.getAdminID(), this.getBot().getApiClient())
-                .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
-                    builder.setAuthor(ban.getAdminName(), null, user.getAvatarUrl());
-                    TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
-                    if (channel != null) channel.sendMessage(builder.build()).queue();
-                }));
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(BanListener.class);
     }
 }
