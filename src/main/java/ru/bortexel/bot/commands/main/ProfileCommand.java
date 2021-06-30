@@ -66,7 +66,7 @@ public class ProfileCommand extends DefaultBotCommand {
 
             builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
             builder.addField("Последний вход", profile.getLastLogin() != null
-                    ? TimeUtil.getDefaultDateFormat().format(profile.getLastLogin())
+                    ? "<t:" + profile.getLastLogin().getTime() / 1000 + ":R>"
                     : "Никогда", true);
 
             callback.accept(builder.build());
