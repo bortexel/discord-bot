@@ -26,7 +26,7 @@ public class BanListener extends BotListener {
     @Override
     public void onBanCreated(GenericBanEvent event) {
         try {
-            Ban ban = event.getPayload();
+            Ban ban = event.getBan();
             getLogger().info("Received info about ban #" + ban.getID());
 
             EmbedBuilder builder = new EmbedBuilder();

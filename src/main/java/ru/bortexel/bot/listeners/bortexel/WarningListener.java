@@ -21,7 +21,7 @@ public class WarningListener extends BotListener {
     @Override
     public void onWarningCreated(GenericWarningEvent event) {
         try {
-            Warning warning = event.getPayload();
+            Warning warning = event.getWarning();
             getLogger().info("Received info about warning #" + warning.getID());
 
             EmbedBuilder builder = new EmbedBuilder();
