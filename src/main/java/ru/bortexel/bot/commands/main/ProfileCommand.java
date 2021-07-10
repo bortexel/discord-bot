@@ -64,6 +64,9 @@ public class ProfileCommand extends DefaultBotCommand {
                         "**Текущая мощность:** " + warnings.getCurrentPower() + "\n" +
                         "**Причины:** " + String.join(", ", warnings.getReasons()), true);
 
+            if (profile.getDiscordID() != null)
+                builder.addField("Привязанный Discord", "<@" + profile.getDiscordID() + ">", true);
+
             builder.addField("ID (A/U)", "" + profile.getAccountID() + "/" + profile.getUserID(), true);
             builder.addField("Последний вход", profile.getLastLogin() != null
                     ? "<t:" + profile.getLastLogin().getTime() / 1000 + ":R>"
