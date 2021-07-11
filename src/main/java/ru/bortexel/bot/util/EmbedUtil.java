@@ -2,16 +2,21 @@ package ru.bortexel.bot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.models.BotRole;
+import ru.ruscalworld.bortexel4j.models.account.Account;
+import ru.ruscalworld.bortexel4j.models.city.City;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
+import ru.ruscalworld.bortexel4j.models.shop.Shop;
+import ru.ruscalworld.bortexel4j.models.user.User;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class EmbedUtil {
     public static EmbedBuilder makeError(@Nullable String title, String text) {
@@ -97,6 +102,53 @@ public class EmbedUtil {
         }
 
         return builder;
+    }
+
+    public static EmbedBuilder makeShopInfo(Shop shop, Account ownerAccount, User ownerPlayer) {
+        Shop.Position position = shop.getPosition();
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.setTitle(shop.getName(), "https://bort.su/s/" + shop.getID());
+        builder.setDescription(shop.getDescription());
+        builder.addField("Категории товаров", shop.getItems(), false);
+        builder.addField("Местоположение", position.getObjectName() + ", " + position.getLocation(), true);
+
+        if (ownerAccount != null && ownerPlayer != null) {
+            builder.addField("Владелец", TextUtil.makeUserName(ownerPlayer.getUsername(), ownerAccount.getDiscordID()), true);
+        }
+
+        builder.setImage(shop.getImages().getScreenshotURL());
+        builder.setColor(randomColor(shop.getName().hashCode()).brighter());
+        return builder;
+    }
+
+    public static EmbedBuilder makeCityInfo(City city, Account ownerAccount, User ownerPlayer) {
+        City.Points points = city.getPoints();
+        EmbedBuilder builder = new EmbedBuilder();
+        String mapLink = new MapReference(city.getLocation(), "vanilla").getBlueMapLinkMarkdown(100);
+
+        builder.setTitle(city.getName(), "https://bort.su/c/" + city.getID());
+        builder.setDescription(city.getDescription());
+        builder.addField("Стилистика", city.getStyle(), true);
+        builder.addField("Дата основания", "<t:" + (city.getFoundedAt().getTime() / 1000) + ":D>", true);
+        builder.addField("Местоположение", TextUtil.makeLocation2D(city.getLocation()) + " " + mapLink, false);
+        builder.addField("Точки",
+                "Верхний мир: `/где " + points.getOverworld() + "` \n" +
+                "Нижний мир: `/где " + points.getNether() + "`", false);
+
+        if (ownerAccount != null && ownerPlayer != null) {
+            builder.addField("Представитель", TextUtil.makeUserName(ownerPlayer.getUsername(), ownerAccount.getDiscordID()), true);
+        }
+
+        builder.setImage(city.getImages().getScreenshotURL());
+        builder.setThumbnail(city.getImages().getEmblemURL());
+        builder.setColor(randomColor(city.getName().hashCode()).brighter());
+        return builder;
+    }
+
+    private static Color randomColor(int seed) {
+        Random random = new Random(seed);
+        return new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
     }
 
     public static EmbedBuilder makeDefaultEmbed() {

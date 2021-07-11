@@ -2,8 +2,11 @@ package ru.bortexel.bot.util;
 
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.Message;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
+import ru.ruscalworld.bortexel4j.util.Location;
 
 public class TextUtil {
     public static String removeDoubleSpaces(String string) {
@@ -88,5 +91,35 @@ public class TextUtil {
     public static String removeSpacesInStart(String string) {
         while (string.startsWith(" ")) string = string.substring(1);
         return string;
+    }
+
+    public static String makeLocation(Location location) {
+        return String.format("%s %s %s (%s)", location.getX(), location.getY(), location.getZ(), getLocalizedWorldName(location.getWorld()));
+    }
+
+    public static String makeLocation2D(Location location) {
+        return String.format("%s %s (%s)", location.getX(), location.getZ(), getLocalizedWorldName(location.getWorld()));
+    }
+
+    public static String getLocalizedWorldName(String world) {
+        switch (world) {
+            case "world":
+            case "overworld":
+                return "верхний мир";
+            case "world_nether":
+            case "the_nether":
+                return "нижний мир";
+            case "world_the_end":
+            case "the_end":
+                return "Энд";
+            default:
+                return world;
+        }
+    }
+
+    public static String makeUserName(@NotNull String username, @Nullable String discordID) {
+        String ownerInfo = username.replace("_", "\\_");
+        if (discordID != null) ownerInfo += " (<@" + discordID + ">)";
+        return ownerInfo;
     }
 }

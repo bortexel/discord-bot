@@ -13,4 +13,7 @@ public class Roles {
     public static final String SPONSOR_ROLE = "828006196401274900";
     public static final String SUPPORTER_ROLE = "651398861868367902";
     public static final String SERVER_BOOSTER_ROLE = "645498320285990923";
+
+    public static final String CITY_REPRESENTATIVE_ROLE = "738083989092565053";
+    public static final String SHOP_OWNER_ROLE = "817049891254829116";
 }
