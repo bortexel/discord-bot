@@ -11,6 +11,7 @@ public class Database {
     private final String user;
     private final String password;
     private final String database;
+    private Connection connection;
 
     public Database(String host, String user, String password, String database) {
         this.host = host;
@@ -36,7 +37,9 @@ public class Database {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(getConnectionURL(host, database), user, password);
+        if (connection == null || !connection.isValid(1))
+            connection = DriverManager.getConnection(getConnectionURL(host, database), user, password);
+        return connection;
     }
 
     private static String getConnectionURL(String host, String database) {
