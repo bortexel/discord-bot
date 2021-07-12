@@ -17,43 +17,43 @@ public class AccessLevels {
 
     public AccessLevel getAdministratorAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.ADMIN_ROLE));
+            add(Roles.admin(bot).getRole());
         }}, bot);
     }
 
     public AccessLevel getModeratorAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.ADMIN_ROLE));
-            add(jda.getRoleById(Roles.MODERATOR_ROLE));
+            add(Roles.admin(bot).getRole());
+            add(Roles.moderator(bot).getRole());
         }}, bot);
     }
 
     public AccessLevel getHelperAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.ADMIN_ROLE));
-            add(jda.getRoleById(Roles.MODERATOR_ROLE));
-            add(jda.getRoleById(Roles.HELPER_ROLE));
+            add(Roles.admin(bot).getRole());
+            add(Roles.moderator(bot).getRole());
+            add(Roles.helper(bot).getRole());
         }}, bot);
     }
 
     public AccessLevel getSponsorAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.SPONSOR_ROLE));
-            add(jda.getRoleById(Roles.SUPPORTER_ROLE));
-            add(jda.getRoleById(Roles.SERVER_BOOSTER_ROLE));
+            add(Roles.sponsor(bot).getRole());
+            add(Roles.supporter(bot).getRole());
+            add(Roles.serverBooster(bot).getRole());
         }}, bot);
     }
 
     public AccessLevel getHeadBuilderAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.HEAD_BUILDER_ROLE));
-            add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
+            add(Roles.headBuilder(bot).getRole());
+            add(Roles.parliament(bot).getRole());
         }}, bot);
     }
 
     public AccessLevel getParliamentAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(jda.getRoleById(Roles.PARLIAMENT_ROLE));
+            add(Roles.parliament(bot).getRole());
         }}, bot);
     }
 }

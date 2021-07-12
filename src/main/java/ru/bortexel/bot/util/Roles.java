@@ -1,5 +1,7 @@
 package ru.bortexel.bot.util;
 
+import ru.bortexel.bot.BortexelBot;
+
 public class Roles {
     public static final String HELPER_ROLE = "536125597227941890";
     public static final String MODERATOR_ROLE = "536125163415273474";
@@ -20,4 +22,68 @@ public class Roles {
     public static final String PLAYER_ROLE = "592674085092327434";
     public static final String ACTIVE_PLAYER_ROLE = "683954431418433557";
     public static final String BANNED_PLAYER_ROLE = "683956308411416623";
+
+    public static RoleWrapper helper(BortexelBot bot) {
+        return getRole(HELPER_ROLE, bot);
+    }
+
+    public static RoleWrapper moderator(BortexelBot bot) {
+        return getRole(MODERATOR_ROLE, bot);
+    }
+
+    public static RoleWrapper admin(BortexelBot bot) {
+        return getRole(ADMIN_ROLE, bot);
+    }
+
+    public static RoleWrapper parliament(BortexelBot bot) {
+        return getRole(PARLIAMENT_ROLE, bot);
+    }
+
+    public static RoleWrapper headBuilder(BortexelBot bot) {
+        return getRole(HEAD_BUILDER_ROLE, bot);
+    }
+
+    public static RoleWrapper builder(BortexelBot bot) {
+        return getRole(BUILDER_ROLE, bot);
+    }
+
+    public static RoleWrapper judge(BortexelBot bot) {
+        return getRole(JUDGE_ROLE, bot);
+    }
+
+    public static RoleWrapper sponsor(BortexelBot bot) {
+        return getRole(SPONSOR_ROLE, bot);
+    }
+
+    public static RoleWrapper supporter(BortexelBot bot) {
+        return getRole(SUPPORTER_ROLE, bot);
+    }
+
+    public static RoleWrapper serverBooster(BortexelBot bot) {
+        return getRole(SERVER_BOOSTER_ROLE, bot);
+    }
+
+    public static RoleWrapper cityRepresentative(BortexelBot bot) {
+        return getRole(CITY_REPRESENTATIVE_ROLE, bot);
+    }
+
+    public static RoleWrapper shopOwner(BortexelBot bot) {
+        return getRole(SHOP_OWNER_ROLE, bot);
+    }
+
+    public static RoleWrapper player(BortexelBot bot) {
+        return getRole(PLAYER_ROLE, bot);
+    }
+
+    public static RoleWrapper activePlayer(BortexelBot bot) {
+        return getRole(ACTIVE_PLAYER_ROLE, bot);
+    }
+
+    public static RoleWrapper bannedPlayer(BortexelBot bot) {
+        return getRole(BANNED_PLAYER_ROLE, bot);
+    }
+
+    private static RoleWrapper getRole(String id, BortexelBot bot) {
+        return new RoleWrapper(id, bot);
+    }
 }

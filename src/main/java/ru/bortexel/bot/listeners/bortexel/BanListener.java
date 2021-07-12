@@ -59,11 +59,8 @@ public class BanListener extends BotListener {
                     }));
 
             Account.getByID(ban.getAccountID(), this.getBot().getApiClient())
-                    .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
-                        Role bannedPlayer = jda.getRoleById(Roles.BANNED_PLAYER_ROLE);
-                        if (bannedPlayer == null) return;
-                        this.getBot().getMainGuild().addRoleToMember(account.getDiscordID(), bannedPlayer).queue();
-                    }));
+                    .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> Roles
+                            .bannedPlayer(this.getBot()).addTo(account.getDiscordID())));
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }

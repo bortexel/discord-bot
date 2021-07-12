@@ -23,44 +23,32 @@ public class GuildJoinListener extends BotListener {
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         Bortexel4J client = this.getBot().getApiClient();
-        JDA jda = this.getBot().getJDA();
-        Guild guild = event.getGuild();
         Member member = event.getMember();
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         Account.getByDiscordID(member.getId(), client).executeAsync(account -> {
             // Проверяем на наличие активных банов
             account.getBans(client).executeAsync(accountBans -> {
-                Role bannedPlayer = jda.getRoleById(Roles.BANNED_PLAYER_ROLE);
-                if (bannedPlayer == null) return;
-
                 for (Ban ban : accountBans.getBans()) {
                     // Выдаём роль "Забанен", если есть действующий бан
                     if (!ban.isActual()) continue;
-                    guild.addRoleToMember(member, bannedPlayer).queue();
+                    Roles.bannedPlayer(this.getBot()).addTo(member);
                     break;
                 }
             });
 
             // Проверяем на наличие игровых аккаунтов
             account.getUsers(client).executeAsync(accountUsers -> {
-                Role player = jda.getRoleById(Roles.PLAYER_ROLE);
-                if (player == null) return;
-
                 for (User user : accountUsers.getUsers()) {
                     // Выдаём роль "Игрок", если срок действия игрового аккаунта не истёк
                     Timestamp validTill = user.getValidTill();
                     if (validTill == null || validTill.before(now)) continue;
-                    guild.addRoleToMember(member, player).queue();
-
-                    // Находим роль "Активный игрок", а если её нет, выходим из цикла
-                    Role activePlayer = jda.getRoleById(Roles.ACTIVE_PLAYER_ROLE);
-                    if (activePlayer == null) break;
+                    Roles.player(this.getBot()).addTo(member);
 
                     // Выдаём роль "Активный игрок", если срок активности игрового аккаунта не истёк
                     Timestamp activeTill = user.getActiveTill();
                     if (activeTill == null || activeTill.before(now)) continue;
-                    guild.addRoleToMember(member, activePlayer).queue((a) -> {}, Throwable::printStackTrace);
+                    Roles.activePlayer(this.getBot()).addTo(member);
                     break;
                 }
             });

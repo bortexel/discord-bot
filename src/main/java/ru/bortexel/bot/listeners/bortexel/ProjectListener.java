@@ -37,11 +37,8 @@ public class ProjectListener extends BotListener {
                                             .queue(message -> ExternalResource.register(ResourceType.SHOP, shop.getID(), message, bot));
                                     else return;
 
-                                    if (account.getDiscordID() != null) {
-                                        Role role = bot.getJDA().getRoleById(Roles.SHOP_OWNER_ROLE);
-                                        if (role == null) return;
-                                        channel.getGuild().addRoleToMember(account.getDiscordID(), role).queue();
-                                    }
+                                    if (account.getDiscordID() != null)
+                                        Roles.shopOwner(bot).addTo(account.getDiscordID());
                                 }
                         )
                 );
@@ -61,11 +58,8 @@ public class ProjectListener extends BotListener {
                                             .queue(message -> ExternalResource.register(ResourceType.CITY, city.getID(), message, bot));
                                     else return;
 
-                                    if (account.getDiscordID() != null) {
-                                        Role role = bot.getJDA().getRoleById(Roles.CITY_REPRESENTATIVE_ROLE);
-                                        if (role == null) return;
-                                        channel.getGuild().addRoleToMember(account.getDiscordID(), role).queue();
-                                    }
+                                    if (account.getDiscordID() != null)
+                                        Roles.cityRepresentative(bot).addTo(account.getDiscordID());
                                 }
                         )
                 );

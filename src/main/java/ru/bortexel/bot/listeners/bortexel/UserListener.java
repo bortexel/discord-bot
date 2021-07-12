@@ -1,6 +1,5 @@
 package ru.bortexel.bot.listeners.bortexel;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.Roles;
@@ -22,14 +21,9 @@ public class UserListener extends BotListener {
 
         event.getUser().getAccount(this.getBot().getApiClient()).executeAsync(userAccount -> {
             Account account = userAccount.getAccount();
-            Guild guild = this.getBot().getMainGuild();
             if (user.getActiveTill() == null || user.getActiveTill().before(TimeUtil.now())) {
-                // Забрать роль
-                guild.removeRoleFromMember(account.getDiscordID(), activePlayer).queue();
-            } else {
-                // Выдать роль
-                guild.addRoleToMember(account.getDiscordID(), activePlayer).queue();
-            }
+                Roles.activePlayer(this.getBot()).removeFrom(account.getDiscordID());
+            } else Roles.activePlayer(this.getBot()).addTo(account.getDiscordID());
         });
     }
 }

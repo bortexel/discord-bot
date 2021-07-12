@@ -13,7 +13,7 @@ public class JudgeRoleCommand extends RoleCommand {
 
     @Override
     protected Role getRole() {
-        return this.getBot().getJDA().getRoleById(Roles.JUDGE_ROLE);
+        return Roles.judge(this.getBot()).getRole();
     }
 
     @Override
