@@ -20,6 +20,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandGroup;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.Database;
+import ru.bortexel.bot.listeners.GuildJoinListener;
 import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.BanListener;
@@ -117,6 +118,7 @@ public class BortexelBot {
         jda.addEventListener(new CommandListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
         jda.addEventListener(new GuildListener(this));
+        jda.addEventListener(new GuildJoinListener(this));
 
         this.getBroadcastingServer().registerListener(new BanListener(this));
         this.getBroadcastingServer().registerListener(new WarningListener(this));

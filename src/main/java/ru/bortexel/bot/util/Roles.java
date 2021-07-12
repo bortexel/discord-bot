@@ -16,4 +16,8 @@ public class Roles {
 
     public static final String CITY_REPRESENTATIVE_ROLE = "738083989092565053";
     public static final String SHOP_OWNER_ROLE = "817049891254829116";
+
+    public static final String PLAYER_ROLE = "592674085092327434";
+    public static final String ACTIVE_PLAYER_ROLE = "683954431418433557";
+    public static final String BANNED_PLAYER_ROLE = "683956308411416623";
 }
