@@ -1,5 +1,6 @@
 package ru.bortexel.bot.util;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,5 +216,9 @@ public class TimeUtil {
 
     public static SimpleDateFormat getDefaultDateFormat() {
         return new SimpleDateFormat("E, dd MMMM yyyy HH:mm:ss", new Locale("ru", "RU"));
+    }
+
+    public static Timestamp now() {
+        return new Timestamp(System.currentTimeMillis());
     }
 }

@@ -25,6 +25,7 @@ import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.BanListener;
 import ru.bortexel.bot.listeners.bortexel.ProjectListener;
+import ru.bortexel.bot.listeners.bortexel.UserListener;
 import ru.bortexel.bot.listeners.bortexel.WarningListener;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
@@ -121,6 +122,7 @@ public class BortexelBot {
         jda.addEventListener(new GuildJoinListener(this));
 
         this.getBroadcastingServer().registerListener(new BanListener(this));
+        this.getBroadcastingServer().registerListener(new UserListener(this));
         this.getBroadcastingServer().registerListener(new WarningListener(this));
         this.getBroadcastingServer().registerListener(new ProjectListener(this));
         this.getBroadcastingServer().connect();
