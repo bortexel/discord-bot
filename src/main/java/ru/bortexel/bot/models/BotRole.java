@@ -86,7 +86,7 @@ public class BotRole {
             statement.setString(4, this.getHeadmasterID());
             statement.setString(5, this.getMessageID());
             statement.setString(6, this.getChannelID());
-            statement.setBoolean(7, this.isShowMembers());
+            statement.setBoolean(7, this.shouldShowMembers());
             statement.setInt(8, this.getID());
             return statement.executeUpdate() != 0;
         } catch (SQLException exception) {
@@ -148,7 +148,7 @@ public class BotRole {
         this.channelID = channelID;
     }
 
-    public boolean isShowMembers() {
+    public boolean shouldShowMembers() {
         return showMembers;
     }
 

@@ -7,6 +7,7 @@ public class MainCommandGroup extends DefaultCommandGroup {
     public MainCommandGroup(BortexelBot bot) {
         super(bot, "Основные");
         this.registerCommand(new HelpCommand(this.getBot()));
+        this.registerCommand(new RoleCommand(this.getBot()));
         this.registerCommand(new ProfileCommand(this.getBot()));
         this.registerCommand(new PhotoCommand(this.getBot()));
         this.registerCommand(new PollCommand(this.getBot()));

@@ -80,6 +80,24 @@ public class EmbedUtil {
         return builder;
     }
 
+    public static EmbedBuilder makeShortRoleInfo(BotRole role) {
+        Role discordRole = role.getDiscordRole();
+        List<Member> members = discordRole.getGuild().getMembersWithRoles(discordRole);
+
+        String more = "";
+        if (role.getInfoMessage() != null) more = "[Подробнее...](" + role.getInfoMessage().getJumpUrl() + ")";
+
+        EmbedBuilder builder = makeDefaultEmbed();
+        builder.setTitle(role.getTitle() != null ? role.getTitle() : discordRole.getName());
+        builder.setDescription(role.getDescription() + " " + more);
+        builder.setColor(discordRole.getColor());
+        builder.setFooter("Эта роль есть у " + members.size() + " " +
+                TextUtil.getPlural(members.size(), "участника", "участников", "участников")
+        );
+
+        return builder;
+    }
+
     public static EmbedBuilder makeRoleInfo(BotRole role) {
         Role discordRole = role.getDiscordRole();
         EmbedBuilder builder = makeDefaultEmbed();
@@ -94,7 +112,7 @@ public class EmbedUtil {
             if (headmaster != null) builder.addField("Глава", headmaster.getAsMention(), false);
         }
 
-        if (role.isShowMembers()) {
+        if (role.shouldShowMembers()) {
             List<Member> members = discordRole.getGuild().getMembersWithRoles(discordRole);
             List<String> mentions = new ArrayList<>();
             for (Member member : members) mentions.add(member.getAsMention());
