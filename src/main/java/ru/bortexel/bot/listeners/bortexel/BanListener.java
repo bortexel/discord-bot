@@ -2,11 +2,13 @@ package ru.bortexel.bot.listeners.bortexel;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.Roles;
 import ru.bortexel.bot.util.TextUtil;
 import ru.bortexel.bot.util.TimeUtil;
 import ru.ruscalworld.bortexel4j.listening.events.EventListener;
@@ -54,6 +56,13 @@ public class BanListener extends BotListener {
                         builder.setAuthor(ban.getAdminName(), null, user.getAvatarUrl());
                         TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
                         if (channel != null) channel.sendMessage(builder.build()).queue();
+                    }));
+
+            Account.getByID(ban.getAccountID(), this.getBot().getApiClient())
+                    .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
+                        Role bannedPlayer = jda.getRoleById(Roles.BANNED_PLAYER_ROLE);
+                        if (bannedPlayer == null) return;
+                        this.getBot().getMainGuild().addRoleToMember(account.getDiscordID(), bannedPlayer).queue();
                     }));
         } catch (Exception e) {
             BortexelBot.handleException(e);
