@@ -25,7 +25,7 @@ public class RuleParser {
 
                 StringBuilder description = new StringBuilder();
                 for (String renderedRule : renderedRules) {
-                    if (description.length() + renderedRule.length() > 2000) {
+                    if (description.length() + renderedRule.length() > 4096) {
                         builder.setDescription(description);
                         channel.sendMessage(builder.build()).complete();
 
