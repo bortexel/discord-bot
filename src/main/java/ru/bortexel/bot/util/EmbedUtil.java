@@ -122,6 +122,21 @@ public class EmbedUtil {
         return builder;
     }
 
+    public static Color getShopColor(Shop shop) {
+        switch (shop.getPosition().getObjectName()) {
+            case "Красная линия":
+                return Color.decode("#FF5555");
+            case "Синяя линия":
+                return Color.decode("#5555FF");
+            case "Зелёная линия":
+                return Color.decode("#55FF55");
+            case "Жёлтая линия":
+                return Color.decode("#FFFF55");
+            default:
+                return randomColor(shop.getName().hashCode()).brighter();
+        }
+    }
+
     public static EmbedBuilder makeShopInfo(Shop shop, Account ownerAccount, User ownerPlayer) {
         Shop.Position position = shop.getPosition();
         EmbedBuilder builder = new EmbedBuilder();
@@ -136,7 +151,7 @@ public class EmbedUtil {
         }
 
         builder.setImage(shop.getImages().getScreenshotURL());
-        builder.setColor(randomColor(shop.getName().hashCode()).brighter());
+        builder.setColor(getShopColor(shop));
         return builder;
     }
 
