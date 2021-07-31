@@ -14,7 +14,7 @@ public class MapReference {
     public String getBlueMapLink(int scale) {
         Location loc = this.getBlueMapLocation();
         return String.format(
-                "https://map.bortexel.ru/%s/#%s:%s:%s:%s:%s:0.30:0.30:0:0:perspective",
+                "https://map.bortexel.ru/%s/#%s:%s:%s:%s:%s:0.6:0.6:0:0:perspective",
                 this.getServer(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), scale
         );
     }
