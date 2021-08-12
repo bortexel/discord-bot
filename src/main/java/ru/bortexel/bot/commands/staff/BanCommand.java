@@ -1,6 +1,7 @@
 package ru.bortexel.bot.commands.staff;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
@@ -45,18 +46,25 @@ public class BanCommand extends DefaultBotCommand {
                 }
 
                 builder.setExpiresAt(expiresAt);
-                builder.build().create(bortexel).executeAsync(ban -> {
-                    message.addReaction("✅").queue();
-                }, error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Ошибка",
-                        "Не удалось создать бан. Повторите попытку позже. ```" + error.getMessage() + "```").build()).queue());
+                builder.build().create(bortexel).executeAsync(ban -> message.addReaction("✅").queue(), error -> {
+                    MessageEmbed embed = EmbedUtil.makeError("Ошибка", "Не удалось создать бан. Повторите попытку позже. " +
+                            "```" + error.getMessage() + "```").build();
+                    message.getTextChannel().sendMessage(embed).queue();
+                });
             });
-        }, error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Аккаунт не найден", "Повторите попытку позже.").build()).queue()), error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Игрок не найден", "Игрок с таким никнеймом не найден. " +
-                "Проверьте правильность ввода никнейма и повторите попытку.").build()).queue());
+        }, error -> {
+            MessageEmbed embed = EmbedUtil.makeError("Аккаунт не найден", "Повторите попытку позже.").build();
+            message.getTextChannel().sendMessage(embed).queue();
+        }), error -> {
+            MessageEmbed embed = EmbedUtil.makeError("Игрок не найден", "Игрок с таким никнеймом не найден. " +
+                    "Проверьте правильность ввода никнейма и повторите попытку.").build();
+            message.getTextChannel().sendMessage(embed).queue();
+        });
     }
 
     @Override
     public String[] getAllowedChannelIds() {
-        return new String[] {};
+        return new String[]{};
     }
 
     @Override
