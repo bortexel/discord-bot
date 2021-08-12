@@ -8,6 +8,8 @@ import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
 import ru.ruscalworld.bortexel4j.util.Location;
 
+import java.util.Locale;
+
 public class TextUtil {
     public static String removeDoubleSpaces(String string) {
         while (string.contains("  ")) string = string.replace("  ", " ");
@@ -121,5 +123,11 @@ public class TextUtil {
         String ownerInfo = username.replace("_", "\\_");
         if (discordID != null) ownerInfo += " (<@" + discordID + ">)";
         return ownerInfo;
+    }
+
+    public static String getFlagEmoji(String countryCode) {
+        String emoji = String.format(":flag_%s:", countryCode.toLowerCase(Locale.ROOT));
+        if (EmojiParser.extractEmojis(emoji).size() == 0) return null;
+        return emoji;
     }
 }

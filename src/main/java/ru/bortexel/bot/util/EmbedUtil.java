@@ -10,6 +10,8 @@ import ru.bortexel.bot.models.BotRole;
 import ru.ruscalworld.bortexel4j.models.account.Account;
 import ru.ruscalworld.bortexel4j.models.city.City;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
+import ru.ruscalworld.bortexel4j.models.forms.Question;
+import ru.ruscalworld.bortexel4j.models.forms.WhitelistForm;
 import ru.ruscalworld.bortexel4j.models.shop.Shop;
 import ru.ruscalworld.bortexel4j.models.user.User;
 
@@ -176,6 +178,29 @@ public class EmbedUtil {
         builder.setImage(city.getImages().getScreenshotURL());
         builder.setThumbnail(city.getImages().getEmblemURL());
         builder.setColor(randomColor(city.getName().hashCode()).brighter());
+        return builder;
+    }
+
+    public static EmbedBuilder makeWhitelistFormInfo(WhitelistForm form, Account account) {
+        String flag = TextUtil.getFlagEmoji(form.getAddress().getCountryCode());
+        if (flag == null) flag = "";
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("Заявка #" + form.getID() + " от " + form.getUsername().replace("_", "\\_"));
+        builder.setColor(Color.decode("#2F3136"));
+        builder.addField("E-mail", account.getEmail(), true);
+        builder.addField("IP", form.getAddress().getAddress().getHostAddress() + " " + flag, true);
+        builder.addField("Discord", account.getDiscordID() == null ? "Нет" : "<@" + account.getDiscordID() + ">", true);
+
+        for (Question question : form.getQuestions()) {
+            if (question.getAnswer() == null) continue;
+            builder.addField(question.getQuestion(), question.getAnswer(), false);
+        }
+
+        if (form.getAdminID() != null) {
+            builder.setFooter((form.getConclusion() == 1 ? "Принял " : "Отклонил ") + form.getAdminName());
+            builder.setTimestamp(form.getReviewedAt().toInstant());
+        } else builder.setFooter("Не рассмотрена");
         return builder;
     }
 

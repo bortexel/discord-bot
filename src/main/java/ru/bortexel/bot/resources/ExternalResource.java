@@ -1,12 +1,15 @@
 package ru.bortexel.bot.resources;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.requests.RestAction;
 import ru.bortexel.bot.BortexelBot;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class ExternalResource {
     private final int id;
@@ -25,20 +28,37 @@ public class ExternalResource {
         this.bot = bot;
     }
 
-    public static ExternalResource getByID(int id, BortexelBot bot) {
+    public static Optional<ExternalResource> getByID(int id, BortexelBot bot) {
         try {
             Connection connection = bot.getDatabase().getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM `resources` WHERE `id` = ?");
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) return null;
-            return getFromResult(resultSet, bot);
+            if (!resultSet.next()) return Optional.empty();
+            return Optional.of(getFromResult(resultSet, bot));
         } catch (SQLException exception) {
             BortexelBot.handleException(exception);
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    public static Optional<ExternalResource> getByExternalID(int id, ResourceType resourceType, BortexelBot bot) {
+        try {
+            Connection connection = bot.getDatabase().getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM `resources` WHERE `resource_id` = ? AND `resource_type` = ?");
+            statement.setInt(1, id);
+            statement.setString(2, resourceType.getValue());
+
+            ResultSet resultSet = statement.executeQuery();
+            if (!resultSet.next()) return Optional.empty();
+            return Optional.of(getFromResult(resultSet, bot));
+        } catch (SQLException exception) {
+            BortexelBot.handleException(exception);
+        }
+
+        return Optional.empty();
     }
 
     public static ExternalResource register(ResourceType resourceType, int resourceID, Message message, BortexelBot bot) {
@@ -51,12 +71,12 @@ public class ExternalResource {
             statement.setString(4, message.getId());
 
             int id = statement.executeUpdate();
-            return getByID(id, bot);
+            return getByID(id, bot).orElseThrow(() -> new RuntimeException("External " + resourceType + "#" + resourceID + " was registered, but failed to retrieve it"));
         } catch (SQLException exception) {
             BortexelBot.handleException(exception);
         }
 
-        return null;
+        throw new RuntimeException("Failed to register " + resourceType);
     }
 
     private static ExternalResource getFromResult(ResultSet resultSet, BortexelBot bot) throws SQLException {
@@ -98,6 +118,12 @@ public class ExternalResource {
 
     public String getMessageID() {
         return messageID;
+    }
+
+    public RestAction<Message> retrieveMessage() {
+        TextChannel channel = this.getBot().getJDA().getTextChannelById(this.getChannelID());
+        if (channel == null) return null;
+        return channel.retrieveMessageById(this.getMessageID());
     }
 
     public BortexelBot getBot() {

@@ -12,5 +12,6 @@ public class Channels {
     public static final String CITIES_CHANNEL = "749874715996323910";
     public static final String SHOPS_CHANNEL = "760938586354483220";
     public static final String PUNISHMENTS_CHANNEL = "647110022857228288";
+    public static final String WHITELIST_FORMS_CHANNEL = "606829281829584917";
     public static final String TEST_CHANNEL = "600592720599318528";
 }

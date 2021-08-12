@@ -2,7 +2,8 @@ package ru.bortexel.bot.resources;
 
 public enum ResourceType {
     CITY("city"),
-    SHOP("shop")
+    SHOP("shop"),
+    WHITELIST_FORM("whitelist_form"),
     ;
 
     private final String value;
