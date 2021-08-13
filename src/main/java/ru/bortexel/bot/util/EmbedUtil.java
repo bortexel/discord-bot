@@ -193,7 +193,7 @@ public class EmbedUtil {
         builder.addField("Discord", account.getDiscordID() == null ? "Нет" : "<@" + account.getDiscordID() + ">", true);
 
         for (Question question : form.getQuestions()) {
-            if (question.getAnswer() == null) continue;
+            if (question.getAnswer() == null || question.getAnswer().length() < 1) continue;
             builder.addField(question.getQuestion(), question.getAnswer(), false);
         }
 
