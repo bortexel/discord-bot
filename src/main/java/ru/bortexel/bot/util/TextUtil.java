@@ -126,8 +126,9 @@ public class TextUtil {
     }
 
     public static String getFlagEmoji(String countryCode) {
-        String emoji = String.format(":flag_%s:", countryCode.toLowerCase(Locale.ROOT));
-        if (EmojiParser.extractEmojis(emoji).size() == 0) return null;
-        return emoji;
+        String emoji = String.format(":%s:", countryCode.toLowerCase(Locale.ROOT));
+        String parsed = EmojiParser.parseToUnicode(emoji);
+        if (emoji.equals(parsed)) return null;
+        return parsed;
     }
 }

@@ -39,4 +39,10 @@ class TextUtilTest {
         assertEquals("[===]", TextUtil.makeProgressBar(50, 10, "[", "=", "]", "."));
         assertEquals(".", TextUtil.makeProgressBar(0, 10, "[", "=", "]", "."));
     }
+
+    @Test
+    void getFlagEmoji() {
+        assertEquals("\uD83C\uDDFA\uD83C\uDDE6", TextUtil.getFlagEmoji("UA"));
+        assertNull(TextUtil.getFlagEmoji("HUI"));
+    }
 }
