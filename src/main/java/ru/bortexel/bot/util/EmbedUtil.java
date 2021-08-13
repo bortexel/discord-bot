@@ -189,7 +189,7 @@ public class EmbedUtil {
         builder.setTitle("Заявка #" + form.getID() + " от " + form.getUsername().replace("_", "\\_"));
         builder.setColor(Color.decode("#2F3136"));
         builder.addField("E-mail", account.getEmail(), true);
-        builder.addField("IP", form.getAddress().getAddress().getHostAddress() + " " + flag, true);
+        builder.addField("IP", flag + " " + form.getAddress().getAddress().getHostAddress(), true);
         builder.addField("Discord", account.getDiscordID() == null ? "Нет" : "<@" + account.getDiscordID() + ">", true);
 
         for (Question question : form.getQuestions()) {
