@@ -1,11 +1,13 @@
 package ru.bortexel.bot.listeners.bortexel;
 
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.resources.ExternalResource;
 import ru.bortexel.bot.resources.ResourceType;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
+import ru.bortexel.bot.util.Roles;
 import ru.ruscalworld.bortexel4j.listening.events.EventListener;
 import ru.ruscalworld.bortexel4j.listening.events.forms.GenericRequestEvent;
 import ru.ruscalworld.bortexel4j.models.account.Account;
@@ -25,9 +27,13 @@ public class WhitelistFormListener extends BotListener {
             TextChannel channel = this.getBot().getJDA().getTextChannelById(Channels.WHITELIST_FORMS_CHANNEL);
             if (channel == null) return;
 
-            channel.sendMessage(EmbedUtil.makeWhitelistFormInfo(request, account).build()).queue(message ->
-                    ExternalResource.register(ResourceType.WHITELIST_FORM, request.getID(), message, this.getBot())
-            );
+            Role moderator = Roles.moderator(this.getBot()).getRole();
+            assert moderator != null;
+            channel.sendMessage(moderator.getAsMention())
+                    .embed(EmbedUtil.makeWhitelistFormInfo(request, account).build())
+                    .queue(message ->
+                            ExternalResource.register(ResourceType.WHITELIST_FORM, request.getID(), message, this.getBot())
+                    );
         });
     }
 
