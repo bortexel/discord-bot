@@ -14,6 +14,7 @@ import ru.ruscalworld.bortexel4j.models.forms.Question;
 import ru.ruscalworld.bortexel4j.models.forms.WhitelistForm;
 import ru.ruscalworld.bortexel4j.models.shop.Shop;
 import ru.ruscalworld.bortexel4j.models.user.User;
+import ru.ruscalworld.bortexel4j.rules.RulePart;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -201,6 +202,26 @@ public class EmbedUtil {
             builder.setFooter((form.getConclusion() == 1 ? "Принял " : "Отклонил ") + form.getAdminName());
             builder.setTimestamp(form.getReviewedAt().toInstant());
         } else builder.setFooter("Не рассмотрена");
+        return builder;
+    }
+
+    public static EmbedBuilder makeRuleInfo(RulePart.Rule rule) {
+        EmbedBuilder builder = makeDefaultEmbed();
+        builder.setTitle("Правило " + rule.getName());
+        builder.setDescription(rule.getText());
+
+        if (rule.getRules() != null && rule.getRules().size() > 0) {
+            List<String> childNames = new ArrayList<>();
+            for (RulePart.Rule childRule : rule.getRules()) childNames.add(childRule.getName());
+            builder.addField("Дочерние правила", "`" + String.join("`, `", childNames) + "`", false);
+        }
+
+        if (rule.getPunishments() != null && rule.getPunishments().size() > 0) {
+            List<String> punishments = new ArrayList<>();
+            for (String punishment : rule.getPunishments()) punishments.add(" • " + punishment);
+            builder.addField("Наказания", String.join("\n", punishments), false);
+        }
+
         return builder;
     }
 

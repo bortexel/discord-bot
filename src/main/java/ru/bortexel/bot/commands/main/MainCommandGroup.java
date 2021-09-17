@@ -11,6 +11,7 @@ public class MainCommandGroup extends DefaultCommandGroup {
         this.registerCommand(new ProfileCommand(this.getBot()));
         this.registerCommand(new PhotoCommand(this.getBot()));
         this.registerCommand(new PollCommand(this.getBot()));
+        this.registerCommand(new RuleCommand(this.getBot()));
         this.registerCommand(new PingCommand());
     }
 }
