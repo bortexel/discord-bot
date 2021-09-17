@@ -54,7 +54,7 @@ public class HelpCommand extends DefaultBotCommand {
         if (commandName == null) {
             builder.setTitle("Команды");
 
-            for (CommandGroup provider : this.getBot().getCommandProviders()) {
+            for (CommandGroup provider : this.getBot().getCommandGroups()) {
                 StringBuilder commands = new StringBuilder();
                 int i = 0;
 

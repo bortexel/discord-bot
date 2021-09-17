@@ -104,12 +104,12 @@ public class BortexelBot {
     public void run() {
         this.accessLevels = new AccessLevels(this);
 
-        this.registerCommandProvider(new MainCommandGroup(this));
-        this.registerCommandProvider(new EconomyCommandGroup(this));
-        this.registerCommandProvider(new InfoCommandGroup(this));
-        this.registerCommandProvider(new RoleCommandGroup(this));
-        this.registerCommandProvider(new StaffCommandGroup(this));
-        this.registerCommandProvider(new StuffCommandGroup(this));
+        this.registerCommandGroup(new MainCommandGroup(this));
+        this.registerCommandGroup(new EconomyCommandGroup(this));
+        this.registerCommandGroup(new InfoCommandGroup(this));
+        this.registerCommandGroup(new RoleCommandGroup(this));
+        this.registerCommandGroup(new StaffCommandGroup(this));
+        this.registerCommandGroup(new StuffCommandGroup(this));
 
         this.registerGlobalSlashCommands();
 
@@ -130,7 +130,7 @@ public class BortexelBot {
         Sentry.captureException(throwable);
     }
 
-    private void registerCommandProvider(CommandGroup provider) {
+    private void registerCommandGroup(CommandGroup provider) {
         this.commandGroups.add(provider);
         for (Command command : provider.getCommands()) {
             // Register command using its name
@@ -144,7 +144,7 @@ public class BortexelBot {
 
     private void registerGlobalSlashCommands() {
         List<CommandData> slashCommands = new ArrayList<>();
-        if (this.isShouldRegisterCommands()) for (CommandGroup commandGroup : this.getCommandProviders()) {
+        if (this.isShouldRegisterCommands()) for (CommandGroup commandGroup : this.getCommandGroups()) {
             for (Command command : commandGroup.getCommands()) {
                 if (!command.isGlobal() || command.getSlashCommandData() == null) continue;
                 slashCommands.add(command.getSlashCommandData());
@@ -159,7 +159,7 @@ public class BortexelBot {
         return this.commands.get(label);
     }
 
-    public List<CommandGroup> getCommandProviders() {
+    public List<CommandGroup> getCommandGroups() {
         return this.commandGroups;
     }
 
