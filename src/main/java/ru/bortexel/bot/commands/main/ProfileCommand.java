@@ -3,18 +3,31 @@ package ru.bortexel.bot.commands.main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.util.*;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
+import ru.ruscalworld.bortexel4j.models.profile.Ban;
 import ru.ruscalworld.bortexel4j.models.profile.Profile;
+import ru.ruscalworld.bortexel4j.models.profile.Warning;
 import ru.ruscalworld.bortexel4j.util.BortexelSkins;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ProfileCommand extends DefaultBotCommand {
@@ -29,40 +42,92 @@ public class ProfileCommand extends DefaultBotCommand {
     @Override
     public void onCommand(Message message) {
         String username = TextUtil.getCommandArgs(message)[1];
-        getProfile(username, response -> message.getTextChannel().sendMessage(response).queue());
+        getProfile(username, (embed, row) -> {
+            MessageAction action = message.getTextChannel().sendMessage(embed);
+            if (row.isPresent()) action = action.setActionRows(row.get());
+            action.queue();
+        });
     }
 
     @Override
     public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) {
         OptionMapping usernameOption = event.getOption("username");
         assert usernameOption != null;
-        getProfile(usernameOption.getAsString(), response -> hook.sendMessageEmbeds(response).queue());
+        getProfile(usernameOption.getAsString(), (embed, row) -> {
+            WebhookMessageAction<Message> action = hook.sendMessageEmbeds(embed);
+            if (row.isPresent()) action = action.addActionRows(row.get());
+            action.queue();
+        });
     }
 
-    private void getProfile(String username, Consumer<MessageEmbed> callback) {
-        Profile.getByUserName(username).executeAsync(profile -> {
-            EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
-            builder.setAuthor(profile.getUsername(), null, BortexelSkins.getAvatarURL(profile.getUsername(), true));
-            builder.setThumbnail(BortexelSkins.getBodyRenderURL(profile.getUsername(), true));
+    @Override
+    public void onButtonClick(ButtonClickEvent event, String[] args) {
+        switch (args[1]) {
+            case "bans":
+                getProfileBans(args[2], response -> event.getHook().sendMessageEmbeds(response).queue());
+                break;
+            case "warnings":
+                getProfileWarnings(args[2], response -> event.getHook().sendMessageEmbeds(response).queue());
+                break;
+        }
+    }
 
-            Profile.Bans bans = profile.getBans();
-            if (bans.getCount() > 0) {
-                String text = "**Всего банов:** " + bans.getCount() + "\n" +
-                        "**Активных банов:** " + bans.getActiveCount() + "\n" +
-                        "**Перманентных банов:** " + bans.getPermanentCount() + "\n" +
-                        "**Снятых банов:** " + bans.getSuspendedCount() + "\n";
-                if (bans.getTotalDuration() > 0 && bans.getPermanentCount() == 0)
-                    text = text + "**Суммарный срок:** " + (bans.getTotalDuration() / 3600 / 24) + " дней \n";
-                text = text + "**Причины:** " + String.join(", ", bans.getReasons());
-                builder.addField("Блокировки", text, true);
+    private void getProfileBans(String username, Consumer<MessageEmbed> callback) {
+        Ban.getProfileBans(username).executeAsync(profile -> {
+            EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
+            if (profile.getBans().size() == 0) {
+                builder.setDescription("У этого игрока нет банов");
+                callback.accept(builder.build());
+                return;
             }
 
-            Profile.Warnings warnings = profile.getWarnings();
-            if (warnings.getCount() > 0)
-                builder.addField("Предупреждений", "**Всего предупреждений:** " + warnings.getCount() + "\n" +
-                        "**Суммарная мощность:** " + warnings.getTotalPower() + "\n" +
-                        "**Текущая мощность:** " + warnings.getCurrentPower() + "\n" +
-                        "**Причины:** " + String.join(", ", warnings.getReasons()), true);
+            int active = 0;
+            for (Ban ban : profile.getBans()) {
+                if (!ban.isSuspended() && (ban.getExpiresAt() == null || ban.getExpiresAt().after(new Timestamp(System.currentTimeMillis())))) active++;
+                builder.addField(
+                        ban.getID() + ". Бан за " + ban.getReason() + " " + (ban.isSuspended() ? "(снят)" : ""),
+                        "Выдан " + TextUtil.nullable("модератором `", ban.getAdminName(), "` ", "") +
+                                TextUtil.getTemporal("R", ban.getCreatedAt()) + " " +
+                                TextUtil.getNullableTemporal("до ", "D", ban.getExpiresAt(), "навсегда"),
+                        false
+                );
+            }
+
+            Profile.BanStats stats = profile.getProfile().getBanStats();
+            builder.setFooter("Всего " + profile.getBans().size() + " " + TextUtil.getPlural(profile.getBans().size(), "бан", "бана", "банов") +
+                    ", из них " + active + " " + TextUtil.getPlural(active, "активный", "активных", "активных") +
+                    " и " + stats.getSuspendedCount() + " " + TextUtil.getPlural(stats.getSuspendedCount(), "снятый", "снятых", "снятых"));
+            callback.accept(builder.build());
+        });
+    }
+
+    private void getProfileWarnings(String username, Consumer<MessageEmbed> callback) {
+        Warning.getProfileWarnings(username).executeAsync(profile -> {
+            EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
+            if (profile.getWarnings().size() == 0) {
+                builder.setDescription("У этого игрока нет банов");
+                callback.accept(builder.build());
+                return;
+            }
+
+            for (Warning warning : profile.getWarnings()) builder.addField(
+                    warning.getID() + ". Предупреждение мощностью " + warning.getPower() + " за " + warning.getReason(),
+                    "Выдано " + TextUtil.nullable("модератором `", warning.getAdminName(), "` ", "") +
+                            TextUtil.getTemporal("R", warning.getCreatedAt()),
+                    false
+            );
+
+            Profile.WarningStats stats = profile.getProfile().getWarningStats();
+            builder.setFooter("Всего " + profile.getWarnings().size() + " " +
+                    TextUtil.getPlural(profile.getWarnings().size(), "предупреждение", "предупреждения", "предупреждений") +
+                    " мощностью " + stats.getTotalPower());
+            callback.accept(builder.build());
+        });
+    }
+
+    private void getProfile(String username, BiConsumer<MessageEmbed, Optional<ActionRow>> callback) {
+        Profile.getByUserName(username).executeAsync(profile -> {
+            EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile);
 
             if (profile.getDiscordID() != null)
                 builder.addField("Привязанный Discord", "<@" + profile.getDiscordID() + ">", true);
@@ -72,7 +137,16 @@ public class ProfileCommand extends DefaultBotCommand {
                     ? "<t:" + profile.getLastLogin().getTime() / 1000 + ":R>"
                     : "Никогда", true);
 
-            callback.accept(builder.build());
+            List<Component> components = new ArrayList<>();
+            if (profile.getBanStats().getCount() > 0) components.add(
+                    Button.secondary(this.getName() + " bans " + profile.getUsername(), "Блокировки")
+            );
+
+            if (profile.getWarningStats().getCount() > 0) components.add(
+                    Button.secondary(this.getName() + " warnings " + profile.getUsername(), "Предупреждения")
+            );
+
+            callback.accept(builder.build(), components.size() > 0 ? Optional.of(ActionRow.of(components)) : Optional.empty());
         }, error -> {
             EmbedBuilder builder;
             if (error instanceof NotFoundException) {
@@ -82,7 +156,7 @@ public class ProfileCommand extends DefaultBotCommand {
                 builder = EmbedUtil.makeError("Не удалось получить профиль", "При получении профиля произошла непредвиденная ошибка.");
                 BortexelBot.handleException(error);
             }
-            callback.accept(builder.build());
+            callback.accept(builder.build(), Optional.empty());
         });
     }
 

@@ -20,6 +20,7 @@ import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.core.CommandGroup;
 import ru.bortexel.bot.core.CommandListener;
 import ru.bortexel.bot.core.Database;
+import ru.bortexel.bot.listeners.ButtonClickListener;
 import ru.bortexel.bot.listeners.GuildJoinListener;
 import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
@@ -114,6 +115,7 @@ public class BortexelBot {
         this.registerGlobalSlashCommands();
 
         jda.addEventListener(new CommandListener(this));
+        jda.addEventListener(new ButtonClickListener(this));
         jda.addEventListener(new RoleUpdateListener(this));
         jda.addEventListener(new GuildListener(this));
         jda.addEventListener(new GuildJoinListener(this));

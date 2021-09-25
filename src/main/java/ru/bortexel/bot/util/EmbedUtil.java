@@ -12,9 +12,11 @@ import ru.ruscalworld.bortexel4j.models.city.City;
 import ru.ruscalworld.bortexel4j.models.economy.Item;
 import ru.ruscalworld.bortexel4j.models.forms.Question;
 import ru.ruscalworld.bortexel4j.models.forms.WhitelistForm;
+import ru.ruscalworld.bortexel4j.models.profile.Profile;
 import ru.ruscalworld.bortexel4j.models.shop.Shop;
 import ru.ruscalworld.bortexel4j.models.user.User;
 import ru.ruscalworld.bortexel4j.rules.RulePart;
+import ru.ruscalworld.bortexel4j.util.BortexelSkins;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -222,6 +224,13 @@ public class EmbedUtil {
             builder.addField("Наказания", String.join("\n", punishments), false);
         }
 
+        return builder;
+    }
+
+    public static EmbedBuilder makeProfileEmbed(Profile profile) {
+        EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
+        builder.setAuthor(profile.getUsername(), null, BortexelSkins.getAvatarURL(profile.getUsername(), true));
+        builder.setThumbnail(BortexelSkins.getBodyRenderURL(profile.getUsername(), true));
         return builder;
     }
 

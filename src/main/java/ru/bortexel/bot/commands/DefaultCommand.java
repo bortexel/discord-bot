@@ -83,9 +83,6 @@ public abstract class DefaultCommand implements Command {
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event, InteractionHook hook) { }
-
-    @Override
     public final boolean isEphemeral() {
         return ephemeral;
     }
@@ -102,9 +99,6 @@ public abstract class DefaultCommand implements Command {
     public void setGlobal(boolean global) {
         this.global = global;
     }
-
-    @Override
-    public void onCommand(Message message) { }
 
     public void setLegacySupported(boolean legacy) {
         this.legacy = legacy;

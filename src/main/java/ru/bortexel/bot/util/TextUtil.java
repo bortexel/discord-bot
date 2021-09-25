@@ -4,10 +4,10 @@ import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.Command;
 import ru.ruscalworld.bortexel4j.util.Location;
 
+import java.sql.Timestamp;
 import java.util.Locale;
 
 public class TextUtil {
@@ -130,5 +130,19 @@ public class TextUtil {
         String parsed = EmojiParser.parseToUnicode(emoji);
         if (emoji.equals(parsed)) return null;
         return parsed;
+    }
+
+    public static String nullable(String prefix, String value, String suffix, String def) {
+        if (value == null) return def;
+        return prefix + value + suffix;
+    }
+
+    public static String getTemporal(String mode, Timestamp timestamp) {
+        return "<t:" + timestamp.getTime() / 1000 + ":" + mode + ">";
+    }
+
+    public static String getNullableTemporal(String prefix, String mode, Timestamp timestamp, String def) {
+        if (timestamp == null) return def;
+        return prefix + getTemporal(mode, timestamp);
     }
 }
