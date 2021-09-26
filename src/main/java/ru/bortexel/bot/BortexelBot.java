@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import ru.bortexel.bot.commands.economy.EconomyCommandGroup;
@@ -153,7 +153,7 @@ public class BortexelBot {
             }
         }
 
-        CommandUpdateAction commands = this.getJDA().updateCommands();
+        CommandListUpdateAction commands = this.getJDA().updateCommands();
         commands.addCommands(slashCommands).queue();
     }
 

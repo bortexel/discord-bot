@@ -3,7 +3,7 @@ package ru.bortexel.bot.listeners;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.BortexelBot;
@@ -36,7 +36,7 @@ public class GuildListener extends BotListener {
         }
 
         LoggerFactory.getLogger(this.getClass()).info("Registering commands for guild \"" + guild.getName() + "\"");
-        CommandUpdateAction commands = guild.updateCommands();
+        CommandListUpdateAction commands = guild.updateCommands();
         commands.addCommands(slashCommands).queue();
     }
 }

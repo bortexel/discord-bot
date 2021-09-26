@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 import ru.bortexel.bot.commands.DefaultCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.util.Channels;
@@ -24,7 +23,7 @@ public class PingCommand extends DefaultCommand {
 
     @Override
     public void onCommand(Message message) {
-        message.getChannel().sendMessage(ping(message.getJDA())).queue();
+        message.getChannel().sendMessageEmbeds(ping(message.getJDA())).queue();
     }
 
     @Override
