@@ -20,7 +20,8 @@
             <url>https://jcenter.bintray.com/</url>
         </repository>
         <repository>
-            <id>m2-dv8tion</id>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
@@ -98,9 +99,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.dv8fromtheworld</groupId>
-            <artifactId>jda</artifactId>
-            <version>757de9b</version>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.3.0_331</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
