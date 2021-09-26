@@ -30,18 +30,14 @@ public class UpdateRulesCommand extends DefaultBotCommand {
 
             File mainRulesTitle = new File("main-rules.png");
             File roleplayRulesTitle = new File("roleplay-rules.png");
-            File placesRulesTitle = new File("places-rules.png");
             String mainRules = "";
             String roleplayRules = "";
-            String placesRules = "";
 
             try {
                 FileUtils.copyURLToFile(new URL(RuleBot.MAIN_RULES_TITLE_URL), mainRulesTitle);
                 FileUtils.copyURLToFile(new URL(RuleBot.ROLEPLAY_RULES_TITLE_URL), roleplayRulesTitle);
-                FileUtils.copyURLToFile(new URL(RuleBot.PLACES_RULES_TITLE_URL), placesRulesTitle);
                 mainRules = new HttpRequest(RuleBot.MAIN_RULES_URL).getResponse();
                 roleplayRules = new HttpRequest(RuleBot.ROLEPLAY_RULES_URL).getResponse();
-                placesRules = new HttpRequest(RuleBot.PLACES_RULES_URL).getResponse();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -50,8 +46,6 @@ public class UpdateRulesCommand extends DefaultBotCommand {
             RuleParser.parseToChannel(mainRules, channel, RuleBot.MAIN_RULES_COLOR);
             channel.sendFile(roleplayRulesTitle).queue();
             RuleParser.parseToChannel(roleplayRules, channel, RuleBot.ROLEPLAY_RULES_COLOR);
-            channel.sendFile(placesRulesTitle).queue();
-            RuleParser.parseToChannel(placesRules, channel, RuleBot.PLACES_RULES_COLOR);
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }
