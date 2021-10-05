@@ -43,7 +43,7 @@ public class PhotoCommand extends DefaultBotCommand {
             seasonId = Integer.parseInt(args[1]);
         } catch (Exception ignored) { }
 
-        getPhotos(seasonId, response -> message.reply(response).queue());
+        getPhotos(seasonId, response -> message.replyEmbeds(response).queue());
     }
 
     @Override
@@ -56,11 +56,12 @@ public class PhotoCommand extends DefaultBotCommand {
 
     private void getPhotos(int seasonID, Consumer<MessageEmbed> callback) {
         if (seasonID == 0) {
-            Photo.getAll(this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, callback));
+            Photo.getAll(true, this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, callback));
         } else try {
             Season season = Season.getByID(seasonID, this.getBot().getApiClient()).execute();
             if (season == null) handlePhotos(Collections.emptyList(), callback);
-            if (season != null) season.getPhotos(this.getBot().getApiClient()).executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), callback));
+            if (season != null) season.getPhotos(true, this.getBot().getApiClient())
+                    .executeAsync(seasonPhotos -> handlePhotos(seasonPhotos.getPhotos(), callback));
         } catch (NotFoundException ignored) {
             MessageEmbed embed = EmbedUtil.makeError("Не удалось получить скриншоты", null).build();
             callback.accept(embed);
@@ -80,10 +81,21 @@ public class PhotoCommand extends DefaultBotCommand {
             Photo photo = photos.get(index);
 
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
-            builder.setImage(photo.getURL());
+
+            String url = photo.getURL();
+            Photo.Proxy proxy = photo.getProxy();
+            if (proxy != null && proxy.getOriginalURL() != null) {
+                url = proxy.getMediumURL() != null ? proxy.getMediumURL() : proxy.getOriginalURL();
+            }
+
+            builder.setImage(url);
             builder.addField("Сезон", "" + photo.getSeason(), true);
-            if (photo.getDescription() != null) builder.addField("Описание", photo.getDescription(), true);
+            if (photo.getDescription() != null) {
+                if (photo.getDescription().length() < 100) builder.setTitle(photo.getDescription());
+                else builder.setDescription(photo.getDescription());
+            }
             if (photo.getAuthorName() != null) builder.addField("Автор", photo.getAuthorName(), true);
+            builder.addField("Полная версия", "[Ссылка](" + photo.getURL() + ")", true);
 
             callback.accept(builder.build());
         } catch (Exception e) {
