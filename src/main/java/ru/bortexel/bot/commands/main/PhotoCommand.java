@@ -56,7 +56,8 @@ public class PhotoCommand extends DefaultBotCommand {
 
     private void getPhotos(int seasonID, Consumer<MessageEmbed> callback) {
         if (seasonID == 0) {
-            Photo.getAll(true, this.getBot().getApiClient()).executeAsync(photos -> handlePhotos(photos, callback));
+            List<Photo> photos = Photo.getAll(true, this.getBot().getApiClient()).fetchAll();
+            handlePhotos(photos, callback);
         } else try {
             Season season = Season.getByID(seasonID, this.getBot().getApiClient()).execute();
             if (season == null) handlePhotos(Collections.emptyList(), callback);
