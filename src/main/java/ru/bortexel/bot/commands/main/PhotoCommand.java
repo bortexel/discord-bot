@@ -82,6 +82,7 @@ public class PhotoCommand extends DefaultBotCommand {
             Photo photo = photos.get(index);
 
             EmbedBuilder builder = EmbedUtil.makeDefaultEmbed();
+            builder.setColor(EmbedUtil.randomColor(photo.getSeason()).brighter());
 
             String url = photo.getURL();
             Photo.Proxy proxy = photo.getProxy();

@@ -234,7 +234,7 @@ public class EmbedUtil {
         return builder;
     }
 
-    private static Color randomColor(int seed) {
+    public static Color randomColor(int seed) {
         Random random = new Random(seed);
         return new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
     }
