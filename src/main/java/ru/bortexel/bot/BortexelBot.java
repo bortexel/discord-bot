@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -17,26 +18,27 @@ import ru.bortexel.bot.commands.main.MainCommandGroup;
 import ru.bortexel.bot.commands.roles.RoleCommandGroup;
 import ru.bortexel.bot.commands.staff.StaffCommandGroup;
 import ru.bortexel.bot.commands.stuff.StuffCommandGroup;
-import ru.bortexel.bot.core.Command;
-import ru.bortexel.bot.core.CommandGroup;
-import ru.bortexel.bot.core.CommandListener;
-import ru.bortexel.bot.core.Database;
+import ru.bortexel.bot.core.*;
 import ru.bortexel.bot.listeners.ButtonClickListener;
 import ru.bortexel.bot.listeners.GuildJoinListener;
 import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.*;
+import ru.bortexel.bot.tasks.InteractionCleanup;
 import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class BortexelBot {
+    private static BortexelBot instance;
     public static final String COMMAND_PREFIX = "$";
     public static final Color EMBED_COLOR = Color.decode("#FFB114");
 
@@ -46,6 +48,8 @@ public class BortexelBot {
     private String mainGuildID;
     private boolean shouldRegisterCommands;
     private AccessLevels accessLevels;
+    private final Timer timer = new Timer();
+    private final ConcurrentHashMap<UUID, InteractionContext> interactions = new ConcurrentHashMap<>();
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<CommandGroup> commandGroups = new ArrayList<>();
     private final BroadcastingServer broadcastingServer;
@@ -55,6 +59,11 @@ public class BortexelBot {
         this.api = api;
         this.database = database;
         this.broadcastingServer = broadcastingServer;
+    }
+
+    public static BortexelBot getInstance() {
+        if (instance == null) throw new IllegalStateException("Bot has not initialized yet");
+        return instance;
     }
 
     public static void main(String[] args) {
@@ -128,6 +137,10 @@ public class BortexelBot {
         this.getBroadcastingServer().registerListener(new ProjectListener(this));
         this.getBroadcastingServer().registerListener(new WhitelistFormListener(this));
         this.getBroadcastingServer().connect();
+
+        this.getTimer().schedule(new InteractionCleanup(), 60000L, 60000L);
+
+        instance = this;
     }
 
     public static void handleException(Throwable throwable) {
@@ -157,6 +170,22 @@ public class BortexelBot {
 
         CommandListUpdateAction commands = this.getJDA().updateCommands();
         commands.addCommands(slashCommands).queue();
+    }
+
+    public UUID registerInteraction(CompletableFuture<Message> supplier) {
+        UUID uuid = UUID.randomUUID();
+        this.interactions.put(uuid, new InteractionContext(supplier));
+        return uuid;
+    }
+
+    public Optional<InteractionContext> consumeInteraction(UUID uuid) {
+        InteractionContext context = this.interactions.get(uuid);
+        if (context == null) return Optional.empty();
+        return Optional.of(this.interactions.remove(uuid));
+    }
+
+    public ConcurrentHashMap<UUID, InteractionContext> getInteractions() {
+        return this.interactions;
     }
 
     public Command getCommand(String label) {
@@ -205,5 +234,9 @@ public class BortexelBot {
 
     public void setShouldRegisterCommands(boolean shouldRegisterCommands) {
         this.shouldRegisterCommands = shouldRegisterCommands;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 }

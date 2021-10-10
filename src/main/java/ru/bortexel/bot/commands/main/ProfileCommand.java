@@ -1,6 +1,7 @@
 package ru.bortexel.bot.commands.main;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
@@ -27,6 +28,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -43,7 +46,7 @@ public class ProfileCommand extends DefaultBotCommand {
     public void onCommand(Message message) {
         String username = TextUtil.getCommandArgs(message)[1];
         getProfile(username, (embed, row) -> {
-            MessageAction action = message.getTextChannel().sendMessage(embed);
+            MessageAction action = message.getTextChannel().sendMessageEmbeds(embed);
             if (row.isPresent()) action = action.setActionRows(row.get());
             action.queue();
         });
@@ -60,69 +63,53 @@ public class ProfileCommand extends DefaultBotCommand {
         });
     }
 
-    @Override
-    public void onButtonClick(ButtonClickEvent event, String[] args) {
-        switch (args[1]) {
-            case "bans":
-                getProfileBans(args[2], response -> event.getHook().sendMessageEmbeds(response).queue());
-                break;
-            case "warnings":
-                getProfileWarnings(args[2], response -> event.getHook().sendMessageEmbeds(response).queue());
-                break;
+    private MessageEmbed getProfileBans(String username) {
+        Ban.ProfileBans profile = Ban.getProfileBans(username).execute();
+        EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
+        if (profile.getBans().size() == 0) {
+            builder.setDescription("У этого игрока нет банов");
+            return builder.build();
         }
-    }
 
-    private void getProfileBans(String username, Consumer<MessageEmbed> callback) {
-        Ban.getProfileBans(username).executeAsync(profile -> {
-            EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
-            if (profile.getBans().size() == 0) {
-                builder.setDescription("У этого игрока нет банов");
-                callback.accept(builder.build());
-                return;
-            }
-
-            int active = 0;
-            for (Ban ban : profile.getBans()) {
-                if (!ban.isSuspended() && (ban.getExpiresAt() == null || ban.getExpiresAt().after(new Timestamp(System.currentTimeMillis())))) active++;
-                builder.addField(
-                        ban.getID() + ". Бан за " + ban.getReason() + " " + (ban.isSuspended() ? "(снят)" : ""),
-                        "Выдан " + TextUtil.nullable("модератором `", ban.getAdminName(), "` ", "") +
-                                TextUtil.getTemporal("R", ban.getCreatedAt()) + " " +
-                                TextUtil.getNullableTemporal("до ", "D", ban.getExpiresAt(), "навсегда"),
-                        false
-                );
-            }
-
-            Profile.BanStats stats = profile.getProfile().getBanStats();
-            builder.setFooter("Всего " + profile.getBans().size() + " " + TextUtil.getPlural(profile.getBans().size(), "бан", "бана", "банов") +
-                    ", из них " + active + " " + TextUtil.getPlural(active, "активный", "активных", "активных") +
-                    " и " + stats.getSuspendedCount() + " " + TextUtil.getPlural(stats.getSuspendedCount(), "снятый", "снятых", "снятых"));
-            callback.accept(builder.build());
-        });
-    }
-
-    private void getProfileWarnings(String username, Consumer<MessageEmbed> callback) {
-        Warning.getProfileWarnings(username).executeAsync(profile -> {
-            EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
-            if (profile.getWarnings().size() == 0) {
-                builder.setDescription("У этого игрока нет банов");
-                callback.accept(builder.build());
-                return;
-            }
-
-            for (Warning warning : profile.getWarnings()) builder.addField(
-                    warning.getID() + ". Предупреждение мощностью " + warning.getPower() + " за " + warning.getReason(),
-                    "Выдано " + TextUtil.nullable("модератором `", warning.getAdminName(), "` ", "") +
-                            TextUtil.getTemporal("R", warning.getCreatedAt()),
+        int active = 0;
+        for (Ban ban : profile.getBans()) {
+            if (!ban.isSuspended() && (ban.getExpiresAt() == null || ban.getExpiresAt().after(new Timestamp(System.currentTimeMillis())))) active++;
+            builder.addField(
+                    ban.getID() + ". Бан за " + ban.getReason() + " " + (ban.isSuspended() ? "(снят)" : ""),
+                    "Выдан " + TextUtil.nullable("модератором `", ban.getAdminName(), "` ", "") +
+                            TextUtil.getTemporal("R", ban.getCreatedAt()) + " " +
+                            TextUtil.getNullableTemporal("до ", "D", ban.getExpiresAt(), "навсегда"),
                     false
             );
+        }
 
-            Profile.WarningStats stats = profile.getProfile().getWarningStats();
-            builder.setFooter("Всего " + profile.getWarnings().size() + " " +
-                    TextUtil.getPlural(profile.getWarnings().size(), "предупреждение", "предупреждения", "предупреждений") +
-                    " мощностью " + stats.getTotalPower());
-            callback.accept(builder.build());
-        });
+        Profile.BanStats stats = profile.getProfile().getBanStats();
+        builder.setFooter("Всего " + profile.getBans().size() + " " + TextUtil.getPlural(profile.getBans().size(), "бан", "бана", "банов") +
+                ", из них " + active + " " + TextUtil.getPlural(active, "активный", "активных", "активных") +
+                " и " + stats.getSuspendedCount() + " " + TextUtil.getPlural(stats.getSuspendedCount(), "снятый", "снятых", "снятых"));
+        return builder.build();
+    }
+
+    private MessageEmbed getProfileWarnings(String username) {
+        Warning.ProfileWarnings profile = Warning.getProfileWarnings(username).execute();
+        EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
+        if (profile.getWarnings().size() == 0) {
+            builder.setDescription("У этого игрока нет банов");
+            return builder.build();
+        }
+
+        for (Warning warning : profile.getWarnings()) builder.addField(
+                warning.getID() + ". Предупреждение мощностью " + warning.getPower() + " за " + warning.getReason(),
+                "Выдано " + TextUtil.nullable("модератором `", warning.getAdminName(), "` ", "") +
+                        TextUtil.getTemporal("R", warning.getCreatedAt()),
+                false
+        );
+
+        Profile.WarningStats stats = profile.getProfile().getWarningStats();
+        builder.setFooter("Всего " + profile.getWarnings().size() + " " +
+                TextUtil.getPlural(profile.getWarnings().size(), "предупреждение", "предупреждения", "предупреждений") +
+                " мощностью " + stats.getTotalPower());
+        return builder.build();
     }
 
     private void getProfile(String username, BiConsumer<MessageEmbed, Optional<ActionRow>> callback) {
@@ -138,13 +125,23 @@ public class ProfileCommand extends DefaultBotCommand {
                     : "Никогда", true);
 
             List<Component> components = new ArrayList<>();
-            if (profile.getBanStats().getCount() > 0) components.add(
-                    Button.secondary(this.getName() + " bans " + profile.getUsername(), "Блокировки")
-            );
+            if (profile.getBanStats().getCount() > 0) {
+                UUID uuid = this.getBot().registerInteraction(CompletableFuture.supplyAsync(() -> {
+                    MessageBuilder message = new MessageBuilder(getProfileBans(profile.getUsername()));
+                    return message.build();
+                }));
 
-            if (profile.getWarningStats().getCount() > 0) components.add(
-                    Button.secondary(this.getName() + " warnings " + profile.getUsername(), "Предупреждения")
-            );
+                components.add(Button.secondary(uuid.toString(), "Блокировки"));
+            }
+
+            if (profile.getWarningStats().getCount() > 0) {
+                UUID uuid = this.getBot().registerInteraction(CompletableFuture.supplyAsync(() -> {
+                    MessageBuilder message = new MessageBuilder(getProfileWarnings(profile.getUsername()));
+                    return message.build();
+                }));
+
+                components.add(Button.secondary(uuid.toString(), "Предупреждения"));
+            }
 
             callback.accept(builder.build(), components.size() > 0 ? Optional.of(ActionRow.of(components)) : Optional.empty());
         }, error -> {
