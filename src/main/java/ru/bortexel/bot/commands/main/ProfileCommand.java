@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -17,12 +16,14 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
-import ru.bortexel.bot.util.*;
+import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.CommandUtil;
+import ru.bortexel.bot.util.EmbedUtil;
+import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.exceptions.NotFoundException;
 import ru.ruscalworld.bortexel4j.models.profile.Ban;
 import ru.ruscalworld.bortexel4j.models.profile.Profile;
 import ru.ruscalworld.bortexel4j.models.profile.Warning;
-import ru.ruscalworld.bortexel4j.util.BortexelSkins;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ProfileCommand extends DefaultBotCommand {
     protected ProfileCommand(BortexelBot bot) {
