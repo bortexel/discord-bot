@@ -157,7 +157,7 @@ public class BortexelBot {
 
     private void registerGlobalSlashCommands() {
         List<CommandData> slashCommands = new ArrayList<>();
-        if (this.isShouldRegisterCommands()) for (CommandGroup commandGroup : this.getCommandGroups()) {
+        if (this.shouldRegisterCommands()) for (CommandGroup commandGroup : this.getCommandGroups()) {
             for (Command command : commandGroup.getCommands()) {
                 if (!command.isGlobal() || command.getSlashCommandData() == null) continue;
                 slashCommands.add(command.getSlashCommandData());
@@ -220,7 +220,7 @@ public class BortexelBot {
         this.mainGuildID = mainGuildID;
     }
 
-    public boolean isShouldRegisterCommands() {
+    public boolean shouldRegisterCommands() {
         return shouldRegisterCommands;
     }
 
