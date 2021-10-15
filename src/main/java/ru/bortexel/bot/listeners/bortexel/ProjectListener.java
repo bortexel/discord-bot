@@ -1,7 +1,6 @@
 package ru.bortexel.bot.listeners.bortexel;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.resources.ExternalResource;
@@ -9,8 +8,6 @@ import ru.bortexel.bot.resources.ResourceType;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.Roles;
-import ru.ruscalworld.bortexel4j.Bortexel4J;
-import ru.ruscalworld.bortexel4j.listening.events.EventListener;
 import ru.ruscalworld.bortexel4j.listening.events.city.GenericCityEvent;
 import ru.ruscalworld.bortexel4j.listening.events.shop.GenericShopEvent;
 import ru.ruscalworld.bortexel4j.models.account.Account;
@@ -33,12 +30,12 @@ public class ProjectListener extends BotListener {
                         .executeAsync(user -> {
                                     MessageEmbed embed = EmbedUtil.makeShopInfo(shop, account, user).build();
                                     TextChannel channel = bot.getJDA().getTextChannelById(Channels.SHOPS_CHANNEL);
-                                    if (channel != null) channel.sendMessage(embed)
+                                    if (channel != null) channel.sendMessageEmbeds(embed)
                                             .queue(message -> ExternalResource.register(ResourceType.SHOP, shop.getID(), message, bot));
                                     else return;
 
                                     if (account.getDiscordID() != null)
-                                        Roles.shopOwner(bot).addTo(account.getDiscordID());
+                                        Roles.shopOwner().grant(account.getDiscordID());
                                 }
                         )
                 );
@@ -54,12 +51,12 @@ public class ProjectListener extends BotListener {
                         .executeAsync(user -> {
                                     MessageEmbed embed = EmbedUtil.makeCityInfo(city, account, user).build();
                                     TextChannel channel = bot.getJDA().getTextChannelById(Channels.CITIES_CHANNEL);
-                                    if (channel != null) channel.sendMessage(embed)
+                                    if (channel != null) channel.sendMessageEmbeds(embed)
                                             .queue(message -> ExternalResource.register(ResourceType.CITY, city.getID(), message, bot));
                                     else return;
 
                                     if (account.getDiscordID() != null)
-                                        Roles.cityRepresentative(bot).addTo(account.getDiscordID());
+                                        Roles.cityRepresentative().grant(account.getDiscordID());
                                 }
                         )
                 );

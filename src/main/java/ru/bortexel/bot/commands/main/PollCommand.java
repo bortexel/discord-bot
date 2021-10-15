@@ -6,9 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.core.Command;
 import ru.bortexel.bot.util.AccessLevels;
-import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.bortexel.bot.util.poll.Poll;
@@ -58,7 +56,7 @@ public class PollCommand extends DefaultBotCommand {
             if (varEmojis.contains(emoji)) {
                 EmbedBuilder builder = EmbedUtil.makeError("Ошибка", "Обозначение варианта, заданного в строке " + (i + 1) + ", " +
                         "совпадает с обозначением одного из других вариантов.");
-                message.getChannel().sendMessage(builder.build()).queue();
+                message.getChannel().sendMessageEmbeds(builder.build()).queue();
                 return;
             }
 
@@ -69,7 +67,7 @@ public class PollCommand extends DefaultBotCommand {
 
         if (variants.size() < 2) {
             EmbedBuilder builder = EmbedUtil.makeError("Ошибка", "Вы должны задать как минимум два варианта.");
-            message.getChannel().sendMessage(builder.build()).queue();
+            message.getChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -100,8 +98,7 @@ public class PollCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        AccessLevels levels = this.getBot().getAccessLevels();
-        return AccessLevel.make(this.getBot(), levels.getHelperAccessLevel(), levels.getHeadBuilderAccessLevel());
+        return AccessLevel.make(this.getBot(), AccessLevels.getHelperAccessLevel(), AccessLevels.getHeadBuilderAccessLevel());
     }
 
     @Override

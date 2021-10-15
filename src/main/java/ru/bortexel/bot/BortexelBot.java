@@ -25,7 +25,6 @@ import ru.bortexel.bot.listeners.GuildListener;
 import ru.bortexel.bot.listeners.RoleUpdateListener;
 import ru.bortexel.bot.listeners.bortexel.*;
 import ru.bortexel.bot.tasks.InteractionCleanup;
-import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.poll.PollReactionListener;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
@@ -46,7 +45,6 @@ public class BortexelBot {
     private final Database database;
     private String mainGuildID;
     private boolean shouldRegisterCommands;
-    private AccessLevels accessLevels;
     private final Timer timer = new Timer();
     private final ConcurrentHashMap<UUID, InteractionContext> interactions = new ConcurrentHashMap<>();
     private final HashMap<String, Command> commands = new HashMap<>();
@@ -113,8 +111,6 @@ public class BortexelBot {
     }
 
     public void run() {
-        this.accessLevels = new AccessLevels(this);
-
         this.registerCommandGroup(new MainCommandGroup(this));
         this.registerCommandGroup(new EconomyCommandGroup(this));
         this.registerCommandGroup(new InfoCommandGroup(this));
@@ -202,10 +198,6 @@ public class BortexelBot {
 
     public Bortexel4J getApiClient() {
         return api;
-    }
-
-    public AccessLevels getAccessLevels() {
-        return this.accessLevels;
     }
 
     public Database getDatabase() {

@@ -9,11 +9,9 @@ import java.util.List;
 
 public class AccessLevel {
     private final List<Role> roles;
-    private final BortexelBot bot;
 
-    public AccessLevel(List<Role> roles, BortexelBot bot) {
+    public AccessLevel(List<Role> roles) {
         this.roles = roles;
-        this.bot = bot;
     }
 
     public List<Role> getRoles() {
@@ -22,7 +20,7 @@ public class AccessLevel {
 
     public boolean hasAccess(Member member) {
         if (member == null) return false;
-        if (member.isOwner() && member.getGuild().getId().equals(bot.getMainGuildID())) return true;
+        if (member.isOwner() && member.getGuild().getId().equals(BortexelBot.getInstance().getMainGuildID())) return true;
         for (Role role : this.roles) if (member.getRoles().contains(role)) return true;
         return false;
     }
@@ -30,6 +28,6 @@ public class AccessLevel {
     public static AccessLevel make(BortexelBot bot, AccessLevel... levels) {
         List<Role> roles = new ArrayList<>();
         for (AccessLevel level : levels) roles.addAll(level.roles);
-        return new AccessLevel(roles, bot);
+        return new AccessLevel(roles);
     }
 }

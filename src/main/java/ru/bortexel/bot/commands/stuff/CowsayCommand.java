@@ -12,10 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.util.Channels;
-import ru.bortexel.bot.util.CommandUtil;
-import ru.bortexel.bot.util.EmbedUtil;
-import ru.bortexel.bot.util.TextUtil;
+import ru.bortexel.bot.util.*;
 
 import java.util.Arrays;
 
@@ -28,7 +25,7 @@ public class CowsayCommand extends DefaultBotCommand {
     public void onCommand(Message message) {
         String[] args = TextUtil.getCommandArgs(message);
         args = Arrays.copyOfRange(args, 1, args.length);
-        message.getChannel().sendMessage(cowsay(args)).queue();
+        message.getChannel().sendMessageEmbeds(cowsay(args)).queue();
     }
 
     @Override
@@ -68,7 +65,7 @@ public class CowsayCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getSponsorAccessLevel();
+        return AccessLevels.getSponsorAccessLevel();
     }
 
     @Override

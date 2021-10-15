@@ -21,22 +21,22 @@ public class RoleWrapper {
         this.bot = bot;
     }
 
-    public void addTo(Member member) {
+    public void grant(Member member) {
         if (this.getRole() == null) return;
         this.getGuild().addRoleToMember(member, this.getRole()).queue();
     }
 
-    public void addTo(String memberID) {
+    public void grant(String memberID) {
         if (this.getRole() == null) return;
         this.getGuild().addRoleToMember(memberID, this.getRole()).queue();
     }
 
-    public void removeFrom(Member member) {
+    public void revoke(Member member) {
         if (this.getRole() == null) return;
         this.getGuild().removeRoleFromMember(member, this.getRole()).queue();
     }
 
-    public void removeFrom(String memberID) {
+    public void revoke(String memberID) {
         if (this.getRole() == null) return;
         this.getGuild().removeRoleFromMember(memberID, this.getRole()).queue();
     }

@@ -3,6 +3,7 @@ package ru.bortexel.bot.commands.roles;
 import net.dv8tion.jda.api.entities.Role;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.core.AccessLevel;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.Roles;
 
@@ -13,7 +14,7 @@ public class BuilderRoleCommand extends RoleCommand {
 
     @Override
     protected Role getRole() {
-        return Roles.builder(this.getBot()).getRole();
+        return Roles.builder().getRole();
     }
 
     @Override
@@ -23,6 +24,6 @@ public class BuilderRoleCommand extends RoleCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getHeadBuilderAccessLevel();
+        return AccessLevels.getHeadBuilderAccessLevel();
     }
 }

@@ -6,12 +6,12 @@ import org.apache.commons.io.FileUtils;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
-import ru.bortexel.bot.core.Command;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.ChannelUtil;
 import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.HttpRequest;
 import ru.bortexel.bot.util.rules.RuleBot;
 import ru.bortexel.bot.util.rules.RuleParser;
-import ru.bortexel.bot.util.HttpRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class UpdateRulesCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getAdministratorAccessLevel();
+        return AccessLevels.getAdministratorAccessLevel();
     }
 
     @Override

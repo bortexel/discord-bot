@@ -8,7 +8,6 @@ import ru.bortexel.bot.resources.ResourceType;
 import ru.bortexel.bot.util.Channels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.Roles;
-import ru.ruscalworld.bortexel4j.listening.events.EventListener;
 import ru.ruscalworld.bortexel4j.listening.events.forms.GenericRequestEvent;
 import ru.ruscalworld.bortexel4j.models.account.Account;
 import ru.ruscalworld.bortexel4j.models.forms.WhitelistForm;
@@ -27,10 +26,10 @@ public class WhitelistFormListener extends BotListener {
             TextChannel channel = this.getBot().getJDA().getTextChannelById(Channels.WHITELIST_FORMS_CHANNEL);
             if (channel == null) return;
 
-            Role moderator = Roles.moderator(this.getBot()).getRole();
+            Role moderator = Roles.moderator().getRole();
             assert moderator != null;
             channel.sendMessage(moderator.getAsMention())
-                    .embed(EmbedUtil.makeWhitelistFormInfo(request, account).build())
+                    .setEmbeds(EmbedUtil.makeWhitelistFormInfo(request, account).build())
                     .queue(message ->
                             ExternalResource.register(ResourceType.WHITELIST_FORM, request.getID(), message, this.getBot())
                     );
@@ -45,7 +44,7 @@ public class WhitelistFormListener extends BotListener {
 
         Account.getByID(request.getAccountID(), this.getBot().getApiClient()).executeAsync(account ->
                 resource.get().retrieveMessage().queue(message ->
-                        message.editMessage(EmbedUtil.makeWhitelistFormInfo(request, account).build()).queue()
+                        message.editMessageEmbeds(EmbedUtil.makeWhitelistFormInfo(request, account).build()).queue()
                 )
         );
     }

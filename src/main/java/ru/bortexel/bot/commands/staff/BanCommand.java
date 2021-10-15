@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.bortexel.bot.util.TimeUtil;
@@ -49,16 +50,16 @@ public class BanCommand extends DefaultBotCommand {
                 builder.build().create(bortexel).executeAsync(ban -> message.addReaction("✅").queue(), error -> {
                     MessageEmbed embed = EmbedUtil.makeError("Ошибка", "Не удалось создать бан. Повторите попытку позже. " +
                             "```" + error.getMessage() + "```").build();
-                    message.getTextChannel().sendMessage(embed).queue();
+                    message.getTextChannel().sendMessageEmbeds(embed).queue();
                 });
             });
         }, error -> {
             MessageEmbed embed = EmbedUtil.makeError("Аккаунт не найден", "Повторите попытку позже.").build();
-            message.getTextChannel().sendMessage(embed).queue();
+            message.getTextChannel().sendMessageEmbeds(embed).queue();
         }), error -> {
             MessageEmbed embed = EmbedUtil.makeError("Игрок не найден", "Игрок с таким никнеймом не найден. " +
                     "Проверьте правильность ввода никнейма и повторите попытку.").build();
-            message.getTextChannel().sendMessage(embed).queue();
+            message.getTextChannel().sendMessageEmbeds(embed).queue();
         });
     }
 
@@ -89,6 +90,6 @@ public class BanCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getModeratorAccessLevel();
+        return AccessLevels.getModeratorAccessLevel();
     }
 }

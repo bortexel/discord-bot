@@ -2,19 +2,14 @@ package ru.bortexel.bot.commands.info;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
 import ru.bortexel.bot.models.BotRole;
-import ru.bortexel.bot.util.ChannelUtil;
-import ru.bortexel.bot.util.Channels;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
-
-import java.util.List;
 
 public class RoleInfoCommand extends DefaultBotCommand {
     protected RoleInfoCommand(BortexelBot bot) {
@@ -34,11 +29,11 @@ public class RoleInfoCommand extends DefaultBotCommand {
 
         if (botRole == null) {
             EmbedBuilder builder = EmbedUtil.makeError("Роль не найдена", "Роль с указанным идентификатором не существует.");
-            channel.sendMessage(builder.build()).queue();
+            channel.sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
-        Message infoMessage = channel.sendMessage(botRole.getInfoEmbed().build()).complete();
+        Message infoMessage = channel.sendMessageEmbeds(botRole.getInfoEmbed().build()).complete();
         if (infoMessage != null) {
             Message oldMessage = botRole.getInfoMessage();
             if (oldMessage != null) oldMessage.delete().queue();
@@ -51,7 +46,7 @@ public class RoleInfoCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getAdministratorAccessLevel();
+        return AccessLevels.getAdministratorAccessLevel();
     }
 
     @Override

@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import ru.bortexel.bot.BortexelBot;
 import ru.bortexel.bot.commands.DefaultBotCommand;
 import ru.bortexel.bot.core.AccessLevel;
+import ru.bortexel.bot.util.AccessLevels;
 import ru.bortexel.bot.util.EmbedUtil;
 import ru.bortexel.bot.util.TextUtil;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
@@ -40,10 +41,10 @@ public class WarningCommand extends DefaultBotCommand {
                 builder.setAdminID(admin.getID());
 
                 builder.build().create(bortexel).executeAsync(warning -> message.addReaction("✅").queue(),
-                        error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Ошибка",
+                        error -> message.getTextChannel().sendMessageEmbeds(EmbedUtil.makeError("Ошибка",
                         "Не удалось создать предупреждение. Повторите попытку позже. ```" + error.getMessage() + "```").build()).queue());
             });
-        }, error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Аккаунт не найден", "Повторите попытку позже.").build()).queue()), error -> message.getTextChannel().sendMessage(EmbedUtil.makeError("Игрок не найден", "Игрок с таким никнеймом не найден. " +
+        }, error -> message.getTextChannel().sendMessageEmbeds(EmbedUtil.makeError("Аккаунт не найден", "Повторите попытку позже.").build()).queue()), error -> message.getTextChannel().sendMessageEmbeds(EmbedUtil.makeError("Игрок не найден", "Игрок с таким никнеймом не найден. " +
                 "Проверьте правильность ввода никнейма и повторите попытку.").build()).queue());
     }
 
@@ -69,7 +70,7 @@ public class WarningCommand extends DefaultBotCommand {
 
     @Override
     public AccessLevel getAccessLevel() {
-        return this.getBot().getAccessLevels().getModeratorAccessLevel();
+        return AccessLevels.getModeratorAccessLevel();
     }
 
     @Override

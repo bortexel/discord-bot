@@ -22,8 +22,8 @@ public class UserListener extends BotListener {
         event.getUser().getAccount(this.getBot().getApiClient()).executeAsync(userAccount -> {
             Account account = userAccount.getAccount();
             if (user.getActiveTill() == null || user.getActiveTill().before(TimeUtil.now())) {
-                Roles.activePlayer(this.getBot()).removeFrom(account.getDiscordID());
-            } else Roles.activePlayer(this.getBot()).addTo(account.getDiscordID());
+                Roles.activePlayer().revoke(account.getDiscordID());
+            } else Roles.activePlayer().grant(account.getDiscordID());
         });
     }
 }
