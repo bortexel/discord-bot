@@ -31,11 +31,10 @@ import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 public class BortexelBot {
     private static BortexelBot instance;
@@ -135,6 +134,7 @@ public class BortexelBot {
         this.getBroadcastingServer().registerListener(new UserListener(this));
         this.getBroadcastingServer().registerListener(new WarningListener(this));
         this.getBroadcastingServer().registerListener(new ProjectListener(this));
+        this.getBroadcastingServer().registerListener(new DiscordLinkListener(this));
         this.getBroadcastingServer().registerListener(new WhitelistFormListener(this));
         this.getBroadcastingServer().connect();
 
