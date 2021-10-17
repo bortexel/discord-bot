@@ -1,7 +1,7 @@
 package ru.bortexel.bot.util;
 
 public class Emojis {
-    public static final String GOLD_ORE = "<:gold_ore:727147311947448442>";
+    public static final String DIAMOND_ORE = "<:diamond_ore:851847153164222514>";
 
     public static final String PB_START = "<:pb_start:777646453338275861>";
     public static final String PB_MIDDLE = "<:pb_middle:777646473369878528>";

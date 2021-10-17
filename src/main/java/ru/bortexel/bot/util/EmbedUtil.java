@@ -51,9 +51,9 @@ public class EmbedUtil {
 
         builder.setTitle("Средняя цена на " + PriceUtil.formatName(item.getName(), item.getCategory()));
         builder.setThumbnail(item.getIconURL());
-        builder.addField("За 1", PriceUtil.formatPrice(fPrice) + " " + Emojis.GOLD_ORE, true);
-        builder.addField("За 32", PriceUtil.formatPrice(fPrice * 32) + " " + Emojis.GOLD_ORE, true);
-        builder.addField("За 64", PriceUtil.formatPrice(fPrice * 64) + " " + Emojis.GOLD_ORE, true);
+        builder.addField("За 1", PriceUtil.formatPrice(fPrice) + " " + Emojis.DIAMOND_ORE, true);
+        builder.addField("За 32", PriceUtil.formatPrice(fPrice * 32) + " " + Emojis.DIAMOND_ORE, true);
+        builder.addField("За 64", PriceUtil.formatPrice(fPrice * 64) + " " + Emojis.DIAMOND_ORE, true);
         builder.setTimestamp(price.getTime().toLocalDateTime());
         builder.setFooter("Последнее обновление");
 
