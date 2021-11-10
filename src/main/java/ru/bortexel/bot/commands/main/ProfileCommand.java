@@ -94,7 +94,7 @@ public class ProfileCommand extends DefaultBotCommand {
         Warning.ProfileWarnings profile = Warning.getProfileWarnings(username).execute();
         EmbedBuilder builder = EmbedUtil.makeProfileEmbed(profile.getProfile());
         if (profile.getWarnings().size() == 0) {
-            builder.setDescription("У этого игрока нет банов");
+            builder.setDescription("У этого игрока нет предупреждений");
             return builder.build();
         }
 
