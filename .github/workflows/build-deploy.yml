@@ -15,14 +15,28 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Setup Maven authorization
-      run: |
-        printf "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
-        printf "${{ secrets.SETTINGS_XML }}" > ~/.m2/settings.xml
+
     - name: Build with Maven
       run: mvn package
-    - name: Build, tag, and push Docker image to registry
-      run: |
-        docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PASSWORD }} registry.ruscalworld.ru
-        docker build -t registry.ruscalworld.ru/ruscalworld/bortexelbot .
-        docker push registry.ruscalworld.ru/ruscalworld/bortexelbot
+
+    - name: Login to Docker registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract Docker metadata
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: ghcr.io/bortexel/discord-bot
+
+    - name: Build and push Docker image
+      id: build-and-push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
