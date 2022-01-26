@@ -24,6 +24,6 @@ public class UserListener extends BotListener {
             if (user.getActiveTill() == null || user.getActiveTill().before(TimeUtil.now())) {
                 Roles.activePlayer().revoke(account.getDiscordID());
             } else Roles.activePlayer().grant(account.getDiscordID());
-        });
+        }, BortexelBot::handleException);
     }
 }

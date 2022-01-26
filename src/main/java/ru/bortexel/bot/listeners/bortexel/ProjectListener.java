@@ -57,8 +57,8 @@ public class ProjectListener extends BotListener {
 
                                     if (account.getDiscordID() != null)
                                         Roles.cityRepresentative().grant(account.getDiscordID());
-                                }
-                        )
+                                }, BortexelBot::handleException
+                        ), BortexelBot::handleException
                 );
     }
 }

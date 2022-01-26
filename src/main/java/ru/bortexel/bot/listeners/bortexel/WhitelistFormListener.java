@@ -33,7 +33,7 @@ public class WhitelistFormListener extends BotListener {
                     .queue(message ->
                             ExternalResource.register(ResourceType.WHITELIST_FORM, request.getID(), message, this.getBot())
                     );
-        });
+        }, BortexelBot::handleException);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WhitelistFormListener extends BotListener {
         Account.getByID(request.getAccountID(), this.getBot().getApiClient()).executeAsync(account ->
                 resource.get().retrieveMessage().queue(message ->
                         message.editMessageEmbeds(EmbedUtil.makeWhitelistFormInfo(request, account).build()).queue()
-                )
+                ), BortexelBot::handleException
         );
     }
 }
