@@ -138,7 +138,10 @@ public class EmbedUtil {
             case "Жёлтая линия":
                 return Color.decode("#FFFF55");
             default:
-                return randomColor(shop.getName().hashCode()).brighter();
+                int seed = shop.getName().hashCode();
+                if (shop.getPosition().getObjectName() != null)
+                    seed = shop.getPosition().getObjectName().hashCode();
+                return randomColor(seed).brighter();
         }
     }
 
