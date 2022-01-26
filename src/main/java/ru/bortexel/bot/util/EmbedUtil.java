@@ -185,8 +185,11 @@ public class EmbedUtil {
     }
 
     public static EmbedBuilder makeWhitelistFormInfo(WhitelistForm form, Account account) {
-        String flag = TextUtil.getFlagEmoji(form.getAddress().getCountryCode());
-        if (flag == null) flag = "";
+        String flag = "";
+        if (form.getAddress().getCountryCode() != null) {
+            String flagEmoji = TextUtil.getFlagEmoji(form.getAddress().getCountryCode());
+            if (flagEmoji != null) flag = flagEmoji;
+        }
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Заявка #" + form.getID() + " от " + form.getUsername().replace("_", "\\_"));
