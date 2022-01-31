@@ -46,12 +46,14 @@ public class BanListener extends BotListener {
             }
 
             JDA jda = this.getBot().getJDA();
-            Account.getByID(ban.getAdminID(), this.getBot().getApiClient())
-                    .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
-                        builder.setAuthor(ban.getAdminName(), null, user.getAvatarUrl());
-                        TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
-                        if (channel != null) channel.sendMessageEmbeds(builder.build()).queue();
-                    }));
+            TextChannel channel = jda.getTextChannelById(Channels.PUNISHMENTS_CHANNEL);
+            if (ban.getAdminID() != 0) {
+                Account.getByID(ban.getAdminID(), this.getBot().getApiClient())
+                        .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> {
+                            builder.setAuthor(ban.getAdminName(), null, user.getAvatarUrl());
+                            if (channel != null) channel.sendMessageEmbeds(builder.build()).queue();
+                        }));
+            } else if (channel != null) channel.sendMessageEmbeds(builder.build()).queue();
 
             Account.getByID(ban.getAccountID(), this.getBot().getApiClient())
                     .executeAsync(account -> jda.retrieveUserById(account.getDiscordID()).queue(user -> Roles
