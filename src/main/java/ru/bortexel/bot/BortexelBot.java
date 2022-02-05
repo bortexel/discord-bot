@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bortexel.bot.commands.economy.EconomyCommandGroup;
 import ru.bortexel.bot.commands.info.InfoCommandGroup;
 import ru.bortexel.bot.commands.main.MainCommandGroup;
@@ -36,6 +38,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BortexelBot {
+    private static final Logger logger = LoggerFactory.getLogger("BortexelBot");
     private static BortexelBot instance;
     public static final String COMMAND_PREFIX = "$";
     public static final Color EMBED_COLOR = Color.decode("#FFB114");
@@ -140,6 +143,7 @@ public class BortexelBot {
     }
 
     public static void handleException(Throwable throwable) {
+        logger.error("Handling error", throwable);
         Sentry.captureException(throwable);
     }
 
