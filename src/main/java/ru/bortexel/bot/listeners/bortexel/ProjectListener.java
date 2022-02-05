@@ -36,8 +36,8 @@ public class ProjectListener extends BotListener {
 
                                     if (account.getDiscordID() != null)
                                         Roles.shopOwner().grant(account.getDiscordID());
-                                }
-                        )
+                                }, BortexelBot::handleException
+                        ), BortexelBot::handleException
                 );
     }
 
