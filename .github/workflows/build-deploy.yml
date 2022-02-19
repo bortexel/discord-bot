@@ -3,8 +3,6 @@ name: Build Docker with Java and deploy to registry
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
