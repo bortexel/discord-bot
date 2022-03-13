@@ -7,12 +7,13 @@ import java.util.ArrayList;
 public class AccessLevels {
     public static AccessLevel getAdministratorAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
-            add(Roles.admin().getRole());
+            add(Roles.headAdmin().getRole());
         }});
     }
 
     public static AccessLevel getModeratorAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
+            add(Roles.headAdmin().getRole());
             add(Roles.admin().getRole());
             add(Roles.moderator().getRole());
         }});
@@ -20,6 +21,7 @@ public class AccessLevels {
 
     public static AccessLevel getHelperAccessLevel() {
         return new AccessLevel(new ArrayList<>() {{
+            add(Roles.headAdmin().getRole());
             add(Roles.admin().getRole());
             add(Roles.moderator().getRole());
             add(Roles.helper().getRole());

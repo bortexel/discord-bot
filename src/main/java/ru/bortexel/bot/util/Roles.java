@@ -8,6 +8,7 @@ public class Roles {
     public static final String HELPER_ROLE = "536125597227941890";
     public static final String MODERATOR_ROLE = "536125163415273474";
     public static final String ADMIN_ROLE = "536124431140126730";
+    public static final String HEAD_ADMIN_ROLE = "945712835357470801";
 
     public static final String PARLIAMENT_ROLE = "674168943908487189";
     public static final String HEAD_BUILDER_ROLE = "738098903634935838";
@@ -35,6 +36,10 @@ public class Roles {
 
     public static RoleWrapper admin() {
         return getRole(ADMIN_ROLE);
+    }
+
+    public static RoleWrapper headAdmin() {
+        return getRole(HEAD_ADMIN_ROLE);
     }
 
     public static RoleWrapper parliament() {
