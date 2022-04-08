@@ -99,8 +99,7 @@ public class BortexelBot {
         try {
             JDA jda = builder.build();
 
-            Bortexel4J client = Bortexel4J.login(apiToken);
-            if (apiUrl != null) client.setApiUrl(apiUrl);
+            Bortexel4J client = Bortexel4J.login(apiToken, apiUrl);
             BroadcastingServer broadcastingServer = client.getBroadcastingServer(bcsUrl);
             broadcastingServer.setName("BortexelBot");
 
@@ -110,6 +109,7 @@ public class BortexelBot {
             bot.run();
         } catch (Exception e) {
             Sentry.captureException(e);
+            logger.error("Error while initializing bot", e);
         }
     }
 
