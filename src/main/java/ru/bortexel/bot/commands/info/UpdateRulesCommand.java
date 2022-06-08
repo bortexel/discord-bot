@@ -29,23 +29,17 @@ public class UpdateRulesCommand extends DefaultBotCommand {
             ChannelUtil.clearMessages(channel, 50);
 
             File mainRulesTitle = new File("main-rules.png");
-            File roleplayRulesTitle = new File("roleplay-rules.png");
             String mainRules = "";
-            String roleplayRules = "";
 
             try {
                 FileUtils.copyURLToFile(new URL(RuleBot.MAIN_RULES_TITLE_URL), mainRulesTitle);
-                FileUtils.copyURLToFile(new URL(RuleBot.ROLEPLAY_RULES_TITLE_URL), roleplayRulesTitle);
                 mainRules = new HttpRequest(RuleBot.MAIN_RULES_URL).getResponse();
-                roleplayRules = new HttpRequest(RuleBot.ROLEPLAY_RULES_URL).getResponse();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             channel.sendFile(mainRulesTitle).queue();
             RuleParser.parseToChannel(mainRules, channel, RuleBot.MAIN_RULES_COLOR);
-            channel.sendFile(roleplayRulesTitle).queue();
-            RuleParser.parseToChannel(roleplayRules, channel, RuleBot.ROLEPLAY_RULES_COLOR);
         } catch (Exception e) {
             BortexelBot.handleException(e);
         }
