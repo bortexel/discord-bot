@@ -10,8 +10,8 @@ import ru.ruscalworld.bortexel4j.models.user.User;
 
 import java.sql.Timestamp;
 
-public class RoleChecker {
-    public static void updateRoles(Member member) {
+public class MemberSynchronizer {
+    public static void synchronize(Member member) {
         BortexelBot bot = BortexelBot.getInstance();
         Bortexel4J client = bot.getApiClient();
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -41,6 +41,10 @@ public class RoleChecker {
                     Roles.activePlayer().grant(member);
                     break;
                 }
+
+                if (accountUsers.getUsers().size() > 0) {
+                    member.modifyNickname(accountUsers.getUsers().get(0).getUsername()).queue();
+                }
             });
         }, error -> {
             // Аккаунта нет, снимаем роли
@@ -51,10 +55,10 @@ public class RoleChecker {
         });
     }
 
-    public static void updateRoles(String memberID) {
+    public static void synchronize(String memberID) {
         if (memberID == null) return;
         Guild guild = BortexelBot.getInstance().getMainGuild();
         Member member = guild.getMemberById(memberID);
-        if (member != null) updateRoles(member);
+        if (member != null) synchronize(member);
     }
 }
