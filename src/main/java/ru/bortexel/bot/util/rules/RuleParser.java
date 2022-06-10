@@ -27,7 +27,7 @@ public class RuleParser {
                 for (String renderedRule : renderedRules) {
                     if (description.length() + renderedRule.length() > 4096) {
                         builder.setDescription(description);
-                        channel.sendMessage(builder.build()).complete();
+                        channel.sendMessageEmbeds(builder.build()).complete();
 
                         builder = new EmbedBuilder();
                         builder.setColor(color);
@@ -44,7 +44,7 @@ public class RuleParser {
                     builder.setTimestamp(rules.getLastUpdateTime().toInstant());
                 }
 
-                channel.sendMessage(builder.build()).complete();
+                channel.sendMessageEmbeds(builder.build()).complete();
             }
         } catch (Exception e) {
             BortexelBot.handleException(e);

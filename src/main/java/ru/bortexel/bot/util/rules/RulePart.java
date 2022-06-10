@@ -56,9 +56,10 @@ public class RulePart {
         }
 
         public String render(int level) {
-            List<String> output = new ArrayList<>() {{
-                add("║ ".repeat(level) + "**" + getName() + ".** " + getText());
-            }};
+            List<String> output = new ArrayList<>(List.of(this.getName() == null
+                    ? "║ ".repeat(level) + this.getText()
+                    : "║ ".repeat(level) + "**" + this.getName() + ".** " + this.getText()
+            ));
 
             if (this.getRules() != null) for (Rule subrule : this.getRules()) output.add(subrule.render(level + 1));
             return String.join("\n", output);
