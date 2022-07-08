@@ -134,9 +134,17 @@ public class EmbedUtil {
             case "Синяя линия":
                 return Color.decode("#5555FF");
             case "Зелёная линия":
-                return Color.decode("#55FF55");
+                return Color.decode("#00AA00");
             case "Жёлтая линия":
                 return Color.decode("#FFFF55");
+            case "Розовая линия":
+                return Color.decode("#FF55FF");
+            case "Бирюзовая линия":
+                return Color.decode("#00AAAA");
+            case "Лаймовая линия":
+                return Color.decode("#55FF55");
+            case "Оранжевая линия":
+                return Color.decode("#FFAA00");
             default:
                 int seed = shop.getName().hashCode();
                 if (shop.getPosition().getObjectName() != null)
