@@ -160,7 +160,10 @@ public class EmbedUtil {
         builder.setTitle(shop.getName(), "https://bort.su/s/" + shop.getID());
         builder.setDescription(shop.getDescription());
         builder.addField("Категории товаров", shop.getItems(), false);
-        builder.addField("Местоположение", position.getObjectName() + ", " + position.getLocation(), true);
+
+        String locationString = TextUtil.makeLocation(shop.getLocation());
+        if (shop.getPosition() != null) locationString = position.getObjectName() + ", " + position.getLocation();
+        builder.addField("Местоположение", locationString, true);
 
         if (ownerAccount != null && ownerPlayer != null) {
             builder.addField("Владелец", TextUtil.makeUserName(ownerPlayer.getUsername(), ownerAccount.getDiscordID()), true);
