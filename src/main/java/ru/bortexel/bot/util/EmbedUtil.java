@@ -168,7 +168,7 @@ public class EmbedUtil {
         builder.setDescription(shop.getDescription());
         builder.addField("Категории товаров", shop.getItems(), false);
 
-        String locationString = TextUtil.makeLocation(shop.getLocation());
+        String locationString = TextUtil.makeLocation2D(shop.getLocation());
         if (shop.getPosition() != null) locationString = position.getObjectName() + ", " + position.getLocation();
         builder.addField("Местоположение", locationString, true);
 
