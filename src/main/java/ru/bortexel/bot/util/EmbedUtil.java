@@ -128,6 +128,9 @@ public class EmbedUtil {
     }
 
     public static Color getShopColor(Shop shop) {
+        if (shop.getPosition() == null || shop.getPosition().getObjectName() == null)
+            return defaultShopColor(shop);
+
         switch (shop.getPosition().getObjectName()) {
             case "Красная линия":
                 return Color.decode("#FF5555");
@@ -146,11 +149,15 @@ public class EmbedUtil {
             case "Оранжевая линия":
                 return Color.decode("#FFAA00");
             default:
-                int seed = shop.getName().hashCode();
-                if (shop.getPosition().getObjectName() != null)
-                    seed = shop.getPosition().getObjectName().hashCode();
-                return randomColor(seed).brighter();
+                return defaultShopColor(shop);
         }
+    }
+
+    private static Color defaultShopColor(Shop shop) {
+        int seed = shop.getName().hashCode();
+        if (shop.getPosition() != null && shop.getPosition().getObjectName() != null)
+            seed = shop.getPosition().getObjectName().hashCode();
+        return randomColor(seed).brighter();
     }
 
     public static EmbedBuilder makeShopInfo(Shop shop, Account ownerAccount, User ownerPlayer) {
