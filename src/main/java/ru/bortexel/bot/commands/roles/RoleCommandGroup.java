@@ -7,6 +7,5 @@ public class RoleCommandGroup extends DefaultCommandGroup {
     public RoleCommandGroup(BortexelBot bot) {
         super(bot, "Роли");
         this.registerCommand(new BuilderRoleCommand(this.getBot()));
-        this.registerCommand(new JudgeRoleCommand(this.getBot()));
     }
 }
