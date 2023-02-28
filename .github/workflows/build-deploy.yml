@@ -3,6 +3,8 @@ name: Build Docker with Java and deploy to registry
 on:
   push:
     branches: [ master ]
+  schedule:
+    - cron: 0 0 1 * *
 
 jobs:
   build:
